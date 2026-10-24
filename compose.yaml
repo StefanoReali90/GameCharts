@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: gamechart_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: gamechart
+    ports:
+      - "127.0.0.1:15433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+     db_data:
