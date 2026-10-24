@@ -1,25 +1,26 @@
-import { getPeriodStart } from './datePeriods.js'
+export function buildLeaderboard(data, gameId, year) {
+  const players = new Map(data.players.map((player) => [player.id, player]))
+  const wins = new Map()
 
-export function aggregateLeaderboardScores(entries, period) {
-  const periodStart = getPeriodStart(period)
-  const players = new Map()
+  data.matches.forEach((match) => {
+    if (match.gameId !== Number(gameId) || !match.registeredAt.startsWith(String(year))) return
 
-  entries.forEach((entry) => {
-    const entryDate = new Date(`${entry.date}T00:00:00`)
-    if (periodStart && entryDate < periodStart) return
+    match.winnerIds.forEach((playerId) => {
+      const player = players.get(playerId)
+      if (!player) return
 
-    const player = players.get(entry.playerId) ?? {
-      id: entry.playerId,
-      name: entry.name,
-      score: 0,
-      date: entry.date,
-      avatar: entry.avatar,
-    }
-
-    player.score += entry.score
-    if (entry.date > player.date) player.date = entry.date
-    players.set(entry.playerId, player)
+      const entry = wins.get(playerId) ?? {
+        id: playerId,
+        name: `${player.name} ${player.surname}`,
+        wins: 0,
+        lastWinAt: match.registeredAt,
+      }
+      entry.wins += 1
+      if (match.registeredAt > entry.lastWinAt) entry.lastWinAt = match.registeredAt
+      wins.set(playerId, entry)
+    })
   })
 
-  return [...players.values()]
+  return [...wins.values()].sort((first, second) =>
+    second.wins - first.wins || first.name.localeCompare(second.name, 'it-IT'))
 }

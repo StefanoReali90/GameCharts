@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react'
-import matchHistoryData from '../../data/matchHistoryData.json'
+import mockData from '../../data/mockData.json'
 import { buildMatchHistoryRows } from '../../utils/matchHistory.js'
 import { getPeriodStart } from '../../utils/datePeriods.js'
 import MatchHistoryFilters from './MatchHistoryFilters.jsx'
 import MatchHistoryTable from './MatchHistoryTable.jsx'
-import './MatchHistory.css'
 
-const defaultMatches = buildMatchHistoryRows(matchHistoryData)
+const defaultMatches = buildMatchHistoryRows(mockData)
 
-export default function MatchHistory({ matches = defaultMatches, games = matchHistoryData.games }) {
+export default function MatchHistory({ matches = defaultMatches, games = mockData.games }) {
   const [search, setSearch] = useState('')
   const [gameId, setGameId] = useState('all')
   const [period, setPeriod] = useState('all')
@@ -20,8 +19,8 @@ export default function MatchHistory({ matches = defaultMatches, games = matchHi
 
     return matches
       .filter((match) => {
-        const matchDate = new Date(`${match.date}T00:00:00`)
-        const playerNames = [match.callerName, ...match.winnerNames].join(' ').toLocaleLowerCase('it-IT')
+        const matchDate = new Date(match.registeredAt)
+        const playerNames = [match.callerName, ...match.winnerNames, ...match.results.map((result) => result.playerName)].join(' ').toLocaleLowerCase('it-IT')
         const matchesPlayer = !query || playerNames.includes(query)
         const matchesGame = gameId === 'all' || String(match.gameId) === gameId
         const matchesPeriod = !periodStart || matchDate >= periodStart
@@ -30,15 +29,15 @@ export default function MatchHistory({ matches = defaultMatches, games = matchHi
       })
       .sort((first, second) => {
         const dateOrder = sortDirection === 'desc'
-          ? second.date.localeCompare(first.date)
-          : first.date.localeCompare(second.date)
+          ? second.registeredAt.localeCompare(first.registeredAt)
+          : first.registeredAt.localeCompare(second.registeredAt)
 
         return dateOrder || second.id - first.id
       })
   }, [gameId, matches, period, search, sortDirection])
 
   return (
-    <div className="match-history">
+    <div className="match-history grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-visible">
       <MatchHistoryFilters
         search={search}
         onSearchChange={setSearch}

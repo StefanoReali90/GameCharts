@@ -1,102 +1,77 @@
-import { useState } from 'react'
-
-function SidebarIcon({ name }) {
-  const paths = {
-    trophy: 'M4 2h8v2h2v4h-2v2h-2v2H6v-2H4V8H2V4h2zm0 4H4V5H3v2h1v1h2V7H4zm8 0v2h2V7h1V5h-1v1zM7 12h2v2h3v2H4v-2h3z',
-    history: 'M7 1h3v1h2v1h2v2h1v6h-1v2h-2v1h-2v1H6v-1H4v-1H2v-2H1V6h1V4h2V2h3zm0 3v1H5v2H4v3h1v2h2v1h3v-1h2v-2h1V7h-1V5h-2V4zm1 1h2v3l2 1-1 2-3-2z',
-    settings: 'M7 1h2v2h2v1h2v2h2v4h-2v2h-2v1H9v2H7v-2H5v-1H3v-2H1V6h2V4h2V3h2zm0 5v1H6v3h1v1h3v-1h1V7h-1V6z',
-    moon: 'M9 1h3v2h2v2h1v6h-1v2h-2v2H6v-1H4v-2H2V6h1V4h2V2h4zm1 3v2H8v2H7v2h2v1h3v-2h1V7h-1V5h-1V4z',
-    sun: 'M7 1h2v3H7zm0 11h2v3H7zM1 7h3v2H1zm11 0h3v2h-3zM3 2h2v2H3zm8 9h2v2h-2zM2 12l2-2 1 2-2 2zm8-8 2-2 2 2-2 2zM5 5h6v1h1v5h-1v1H5v-1H4V6h1z',
-  }
-
-  return (
-    <svg className="sidebar-icon" viewBox="0 0 16 16" aria-hidden="true" shapeRendering="crispEdges">
-      <path fill="currentColor" d={paths[name]} />
-    </svg>
-  )
-}
+import { motion } from 'framer-motion'
+import { Clock3, Trophy } from 'lucide-react'
+import NeonButton from '../ui/NeonButton.jsx'
+import { cn } from '../../lib/utils.ts'
 
 export default function AppSidebar({
   sidebarOpen,
   currentPage,
-  theme,
-  onThemeToggle,
   onNavigate,
   onSidebarOpen,
   onPointerEnter,
   onPointerLeave,
 }) {
-  const [settingsOpen, setSettingsOpen] = useState(false)
-
-  const handleSidebarClick = () => {
+  const handleRailClick = () => {
     if (!sidebarOpen) onSidebarOpen()
   }
+
+  const navItemClass = (active) => cn(
+    'group w-full justify-start gap-3 rounded-xl px-3 text-left text-[13px]',
+    active
+      ? 'border-cyber-cyan/25 bg-cyber-cyan/[0.09] text-cyan-100 shadow-neon-cyan'
+      : 'border-transparent bg-transparent text-cyber-muted hover:border-white/[0.07] hover:bg-white/[0.045] hover:text-cyber-text',
+  )
 
   return (
     <aside
       id="app-sidebar"
-      className={`app-sidebar${sidebarOpen ? ' is-open' : ''}`}
-      aria-label="Sidebar"
+      className="app-sidebar relative z-20 h-full min-w-0 overflow-hidden bg-cyber-surface"
+      aria-label="Navigazione principale"
       onPointerEnter={onPointerEnter}
       onPointerMove={onPointerEnter}
       onPointerLeave={onPointerLeave}
-      onClick={handleSidebarClick}
+      onClick={handleRailClick}
     >
-      <div
-        className="sidebar-menu"
+      <motion.div
+        className="absolute left-0 top-0 flex h-full flex-col p-3"
+        style={{ width: 'var(--sidebar-expanded-width)', pointerEvents: sidebarOpen ? 'auto' : 'none' }}
+        animate={{ opacity: sidebarOpen ? 1 : 0, x: sidebarOpen ? 0 : -10 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
         aria-hidden={!sidebarOpen}
       >
-        <nav className="sidebar-nav" aria-label="Pagine">
-          <button
-            className={`nes-btn sidebar-link${currentPage === 'leaderboard' ? ' is-primary' : ''}`}
+        <nav className="grid content-start gap-1.5" aria-label="Pagine">
+          <NeonButton
+            variant="ghost"
+            className={navItemClass(currentPage === 'leaderboard')}
             type="button"
             tabIndex={sidebarOpen ? 0 : -1}
             aria-current={currentPage === 'leaderboard' ? 'page' : undefined}
             onClick={() => onNavigate('leaderboard')}
           >
-            <SidebarIcon name="trophy" />
-            <span>Leaderboard</span>
-          </button>
-          <button
-            className={`nes-btn sidebar-link${currentPage === 'match-history' ? ' is-primary' : ''}`}
+            <Trophy className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden="true" />
+            <span className="flex-1">Leaderboard</span>
+            {currentPage === 'leaderboard' && <span className="h-1.5 w-1.5 rounded-full bg-cyber-cyan shadow-[0_0_10px_rgb(var(--cyber-cyan)/0.9)]" />}
+          </NeonButton>
+          <NeonButton
+            variant="ghost"
+            className={navItemClass(currentPage === 'match-history')}
             type="button"
             tabIndex={sidebarOpen ? 0 : -1}
             aria-current={currentPage === 'match-history' ? 'page' : undefined}
             onClick={() => onNavigate('match-history')}
           >
-            <SidebarIcon name="history" />
-            <span>Storico Match</span>
-          </button>
-          <div className="sidebar-settings">
-            <div
-              className={`sidebar-settings-panel${settingsOpen ? ' is-open' : ''}`}
-              aria-hidden={!settingsOpen}
-            >
-              <div className="sidebar-settings-panel__content">
-                <button
-                  className="nes-btn sidebar-link sidebar-theme-toggle"
-                  type="button"
-                  tabIndex={settingsOpen && sidebarOpen ? 0 : -1}
-                  onClick={onThemeToggle}
-                >
-                  <SidebarIcon name={theme === 'light' ? 'moon' : 'sun'} />
-                  <span>{theme === 'light' ? 'Passa tema nero' : 'Passa tema bianco'}</span>
-                </button>
-              </div>
-            </div>
-            <button
-              className="nes-btn sidebar-link sidebar-settings-toggle"
-              type="button"
-              tabIndex={sidebarOpen ? 0 : -1}
-              aria-expanded={settingsOpen}
-              onClick={() => setSettingsOpen((isOpen) => !isOpen)}
-            >
-              <SidebarIcon name="settings" />
-              <span>Impostazioni</span>
-            </button>
-          </div>
+            <Clock3 className="h-4 w-4 shrink-0 text-purple-300" aria-hidden="true" />
+            <span className="flex-1">Storico Match</span>
+            {currentPage === 'match-history' && <span className="h-1.5 w-1.5 rounded-full bg-cyber-purple shadow-[0_0_10px_rgb(var(--cyber-purple)/0.9)]" />}
+          </NeonButton>
         </nav>
-      </div>
+        <div className="mt-auto px-3 pb-2 pt-6 text-[10px] font-medium uppercase tracking-[0.18em] text-cyber-muted/60">
+          La Spezia | Online
+        </div>
+      </motion.div>
+      {!sidebarOpen && (
+        <span className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-cyber-cyan/35 to-transparent" />
+      )}
     </aside>
   )
 }

@@ -1,46 +1,40 @@
-import { PERIOD_OPTIONS } from '../../utils/datePeriods.js'
+import { Search } from 'lucide-react'
+import { NeonField, NeonInput, NeonSelect } from '../ui/NeonField.jsx'
 
 export default function LeaderboardFilters({
   search,
   onSearchChange,
-  period,
-  onPeriodChange,
-  sortDirection,
-  onSortToggle,
+  gameId,
+  onGameChange,
+  games,
+  year,
+  onYearChange,
+  years,
 }) {
   return (
-    <div className="leaderboard-controls">
-      <label className="nes-field leaderboard-search" htmlFor="leaderboard-search">
-        <span className="leaderboard-field-label">CERCA GIOCATORE</span>
-        <input
+    <div className="mb-4 grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.65fr)] items-end gap-3 max-[760px]:grid-cols-2 max-[480px]:grid-cols-1">
+      <NeonField label="Cerca giocatore" htmlFor="leaderboard-search" className="relative">
+        <Search className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 text-cyber-muted" aria-hidden="true" />
+        <NeonInput
           id="leaderboard-search"
-          className="nes-input"
           type="search"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Nome giocatore"
+          className="pl-10"
         />
-      </label>
+      </NeonField>
 
-      <label className="leaderboard-period" htmlFor="leaderboard-period">
-        <span className="leaderboard-field-label">PERIODO</span>
-        <span className="nes-select">
-          <select id="leaderboard-period" value={period} onChange={(event) => onPeriodChange(event.target.value)}>
-            {PERIOD_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-        </span>
-      </label>
-
-      <button
-        className="nes-btn is-primary leaderboard-sort"
-        type="button"
-        onClick={onSortToggle}
-        aria-label={`Ordina dal ${sortDirection === 'desc' ? 'più basso' : 'più alto'} al ${sortDirection === 'desc' ? 'più alto' : 'più basso'}`}
-      >
-        PUNTEGGIO {sortDirection === 'desc' ? '↓' : '↑'}
-      </button>
+      <NeonField label="Gioco" htmlFor="leaderboard-game">
+        <NeonSelect id="leaderboard-game" value={gameId} onChange={(event) => onGameChange(event.target.value)}>
+          {games.map((game) => <option key={game.id} value={game.id}>{game.name}</option>)}
+        </NeonSelect>
+      </NeonField>
+      <NeonField label="Anno" htmlFor="leaderboard-year" className="max-[760px]:col-span-2 max-[480px]:col-span-1">
+        <NeonSelect id="leaderboard-year" value={year} onChange={(event) => onYearChange(event.target.value)}>
+          {years.map((value) => <option key={value} value={value}>{value}</option>)}
+        </NeonSelect>
+      </NeonField>
     </div>
   )
 }

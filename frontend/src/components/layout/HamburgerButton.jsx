@@ -1,18 +1,20 @@
+import { Menu, X } from 'lucide-react'
+import NeonButton from '../ui/NeonButton.jsx'
+
 export default function HamburgerButton({ expanded, onClick, className = '' }) {
+  const Icon = expanded ? X : Menu
+
   return (
-    <button
-      className={`nes-btn is-primary hamburger-button ${className}`.trim()}
+    <NeonButton
+      variant="subtle"
+      className={`h-11 w-11 justify-self-start rounded-xl p-0 text-cyan-200 hover:border-cyber-cyan/40 hover:text-cyber-cyan ${className}`.trim()}
       type="button"
       aria-label={expanded ? 'Chiudi sidebar' : 'Apri sidebar'}
       aria-expanded={expanded}
       aria-controls="app-sidebar"
       onClick={onClick}
     >
-      <span className="hamburger-icon" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </span>
-    </button>
+      <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
+    </NeonButton>
   )
 }

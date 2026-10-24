@@ -2,37 +2,34 @@
 
 ## Current application
 
-- The navbar shows `La Spezia`; the single hamburger button opens the sidebar.
-- The sidebar contains the `Leaderboard` and `Match History` pages. Each page is shown on its own, not side by side.
-- The collapsed sidebar remains a narrow rail. The page starts to its right. Sidebar and page must move in sync through the shared workspace grid-column transition.
-- Sidebar hover opens immediately and uses no timers. The hamburger button can also pin the sidebar open or close it.
-- Sidebar links keep their expanded-state dimensions and reveal through a clip animation synchronized with the sidebar width.
-- The page must not create document-level scrolling. Keep overflow within tables or page panels when needed.
+- The app is a React + Vite single-page interface for the La Spezia game leaderboard and match history.
+- The visual system is Dark Cyber/Neon Glow built with Tailwind CSS, Framer Motion, and Lucide icons. NES.css is removed.
+- The app shell keeps the navbar, collapsible sidebar, and page content within the viewport. Sidebar and page width animate together.
+- The page area uses `public/videos/background-loop.mp4` as a muted, looping background. It is hidden when the visitor requests reduced motion. Keep panels mostly opaque for readability while retaining their neon glow.
+- `src/components/layout/OpeningVideo.jsx` shows `public/videos/entry-video.mp4` on every fresh site load at 3× speed while the app is already mounted beneath it. It fades and zooms away on video end or error, revealing the ready app; reduced-motion visitors go straight to the app. There is no skip button.
+- Sidebar navigation contains only Leaderboard and Storico Match. The app uses a fixed dark theme and has no theme settings or persistence.
+- Use the browser's native cursor; do not add a custom cursor component or hide the native pointer.
 
 ## Source organization
 
-- `src/App.jsx` owns app-level navigation state and composes the application shell.
-- `src/components/` is the reusable component library. Keep shared layout components in `layout/`, the reusable title in `retrotitle/`, and feature components in `leaderboard/` and `match-history/`.
-- `src/pages/` contains one folder per page: `leaderboard/` and `match-history/`. Page components compose feature components and page titles; they should not duplicate feature logic.
-- `src/data/` contains mock data, and `src/utils/` contains reusable data transformations and date filtering.
-- Keep file names, folders, exports, and identifiers in English. User-facing copy remains Italian unless requested otherwise.
-- Keep `src/index.css` limited to global resets, NES.css, font loading, and global body styles. Place component and page styles alongside their owners.
-- Keep components focused: filters own control markup, tables own table markup, and feature components coordinate state and data.
+- `src/App.jsx` owns page navigation, sidebar state, and page transitions.
+- `src/components/layout/` contains the navbar, sidebar, and hamburger control.
+- `src/components/ui/` contains reusable cyber components such as `NeonButton`, `NeonBadge`, `NeonCard`, `NeonField`, and `NeonHeading`.
+- Navbar and page titles use the same `NeonHeading` typography with the local Magic UI `AuroraText` rainbow glow. Do not add page-entry animations.
+- `src/components/leaderboard/` and `src/components/match-history/` contain feature UI. Preserve their existing React state, props, filtering, sorting, and data transformations when changing presentation.
+- `src/pages/` composes page-level layouts. `src/data/` holds mock data, and `src/utils/` holds data transformations.
+- `src/components/layout/PageFrame.jsx` provides the shared page layout and title.
+- Page titles use the larger high-contrast `page-title` treatment; the navbar's “La Spezia” heading keeps its original size.
+- `src/data/mockData.json` is the single mock source for `Player`, `Game`, `Match`, and each match's `MatchResult` records. The leaderboard derives wins from `winnerIds` for the selected game and year. Match history derives its rows from the same matches.
+- `src/lib/utils.ts` exports `cn`, which combines `clsx` and `tailwind-merge`.
+- Keep file names, folders, and identifiers in English; user-facing copy remains Italian.
 
-## Visual and interaction rules
+## Design and interaction rules
 
-- Use NES.css and `Press Start 2P` for the 8-bit retro-futuristic design.
-- Keep the brand title stationary and high contrast, with a ciano neon glow matching the navbar theme. Page title frames and text shadows use a continuous ciano, yellow, red, and green gradient.
-- Store the La Spezia logo at `public/images/la-spezia-logo.jpg` and use the local asset in the navbar title and browser favicon. Keep enough vertical navbar padding so the title frame does not crowd its edges.
-- Use the small animated rainbow spade cursor from the centralized palette, displayed through the lightweight pointer-following cursor component on fine pointers with a short fading rainbow trail.
-- Keep color tokens in `src/styles/palettes/`. Every palette must expose the same token names; import palettes in `src/index.css` and select them with the root `data-theme` attribute.
-- The sidebar has centered page buttons with pixel icons and a final `Impostazioni` submenu for switching between black and white themes.
-- Choosing a sidebar page closes the menu and suppresses hover reopening until the pointer leaves the rail; the hamburger opens it explicitly on every page. Settings interactions keep the menu open.
-- Persist theme choice in local storage because the app has no user accounts or database preferences.
-- Keep component styles on palette variables; add new colors to both palette files instead of hardcoding them in component CSS.
-- Use soft, blurred shadows for title frames and cards instead of offset hard duplicate outlines.
-- Reuse `RetroTitle` for the navbar and page headings. Pass heading text, semantic element, and visual variant as props so every title keeps the same animated frame and rainbow text shadow.
-- Every page and visual component must be responsive, mobile-first, readable, and free of horizontal overflow.
-- Prefer lightweight CSS and static assets. Animate title decorations with `transform` rather than changing `background-position`; synchronize sidebar and page movement using one shared grid-column transition.
-- Preserve `prefers-reduced-motion`; avoid JavaScript timers for visual transitions.
-- Add page content only when requested. Keep shared components reusable and avoid duplicated styling or logic.
+- Use the deep cyber background (`#050712`) with bright cyan, purple, green and rainbow accents. The three podium cards use gold, silver and bronze neon. Keep the global dark color tokens in `src/tailwind.css` and reference them from `tailwind.config.js`.
+- Use Tailwind utilities for component styling and shared wrappers from `src/components/ui/`. Add reusable shadows and animations in `tailwind.config.js`.
+- Use Framer Motion for short, lightweight transitions. Keep `prefers-reduced-motion` support and avoid timers for visual behavior.
+- `src/hooks/useFloatingTilt.js` supplies the shared floating and pointer-driven 3D tilt for the UI surfaces; keep rotation small on tables and controls so text and scrolling remain usable.
+- Keep data tables scrollable inside their panels and keep all pages responsive without document-level horizontal overflow.
+- Keep the La Spezia logo at `public/images/la-spezia-logo.jpg`; use the local asset, never a machine-specific path.
+- Do not reintroduce NES.css, `nes-*` classes, Press Start 2P, or pixel/8-bit styling.

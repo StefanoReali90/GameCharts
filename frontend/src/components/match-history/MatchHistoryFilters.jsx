@@ -1,4 +1,7 @@
+import { ArrowDown, ArrowUp, CalendarDays, Gamepad2, Search } from 'lucide-react'
 import { PERIOD_OPTIONS } from '../../utils/datePeriods.js'
+import NeonButton from '../ui/NeonButton.jsx'
+import { NeonField, NeonInput, NeonSelect } from '../ui/NeonField.jsx'
 
 export default function MatchHistoryFilters({
   search,
@@ -11,49 +14,48 @@ export default function MatchHistoryFilters({
   onSortToggle,
   games,
 }) {
+  const SortIcon = sortDirection === 'desc' ? ArrowDown : ArrowUp
+
   return (
-    <div className="history-controls">
-      <label className="nes-field history-filter" htmlFor="history-player-search">
-        <span className="field-label">GIOCATORE</span>
-        <input
+    <div className="history-controls grid grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)_minmax(0,1fr)_auto] items-end gap-3 max-[760px]:grid-cols-2 max-[480px]:grid-cols-1">
+      <NeonField label="Giocatore" htmlFor="history-player-search" className="relative">
+        <Search className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 text-cyber-muted" aria-hidden="true" />
+        <NeonInput
           id="history-player-search"
-          className="nes-input"
           type="search"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Nome"
+          placeholder="Cerca un giocatore"
+          className="pl-10"
         />
-      </label>
+      </NeonField>
 
-      <label className="history-filter" htmlFor="history-game-filter">
-        <span className="field-label">GIOCO</span>
-        <span className="nes-select">
-          <select id="history-game-filter" value={gameId} onChange={(event) => onGameChange(event.target.value)}>
-            <option value="all">Tutti i giochi</option>
-            {games.map((game) => <option key={game.id} value={game.id}>{game.name}</option>)}
-          </select>
-        </span>
-      </label>
+      <NeonField label="Gioco" htmlFor="history-game-filter" className="relative">
+        <Gamepad2 className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 text-cyber-muted" aria-hidden="true" />
+        <NeonSelect id="history-game-filter" value={gameId} onChange={(event) => onGameChange(event.target.value)} className="pl-10">
+          <option value="all">Tutti i giochi</option>
+          {games.map((game) => <option key={game.id} value={game.id}>{game.name}</option>)}
+        </NeonSelect>
+      </NeonField>
 
-      <label className="history-filter" htmlFor="history-period-filter">
-        <span className="field-label">PERIODO</span>
-        <span className="nes-select">
-          <select id="history-period-filter" value={period} onChange={(event) => onPeriodChange(event.target.value)}>
-            {PERIOD_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-        </span>
-      </label>
+      <NeonField label="Periodo" htmlFor="history-period-filter" className="relative">
+        <CalendarDays className="pointer-events-none absolute bottom-3 left-3 h-4 w-4 text-cyber-muted" aria-hidden="true" />
+        <NeonSelect id="history-period-filter" value={period} onChange={(event) => onPeriodChange(event.target.value)} className="pl-10">
+          {PERIOD_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </NeonSelect>
+      </NeonField>
 
-      <button
-        className="nes-btn is-primary history-sort"
+      <NeonButton
+        variant="primary"
+        className="history-sort whitespace-nowrap max-[760px]:col-span-2 max-[480px]:col-span-1"
         type="button"
         onClick={onSortToggle}
         aria-label={`Ordina dal ${sortDirection === 'desc' ? 'più vecchio' : 'più recente'} al ${sortDirection === 'desc' ? 'più recente' : 'più vecchio'}`}
       >
-        DATA {sortDirection === 'desc' ? '↓' : '↑'}
-      </button>
+        Data <SortIcon size={16} aria-hidden="true" />
+      </NeonButton>
     </div>
   )
 }

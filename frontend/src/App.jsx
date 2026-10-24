@@ -1,30 +1,31 @@
 import { useEffect, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { AppNavbar, AppSidebar } from './components/layout/index.js'
-import RainbowSpadeCursor from './components/cursor/RainbowSpadeCursor.jsx'
+import OpeningVideo from './components/layout/OpeningVideo.jsx'
 import LeaderboardPage from './pages/leaderboard/LeaderboardPage.jsx'
 import MatchHistoryPage from './pages/match-history/MatchHistoryPage.jsx'
-import './components/layout/AppShell.css'
+import { cn } from './lib/utils.ts'
 
 export default function App() {
   const [sidebarMode, setSidebarMode] = useState('closed')
   const [currentPage, setCurrentPage] = useState('leaderboard')
-  const [theme, setTheme] = useState(() => {
-    try {
-      return window.localStorage.getItem('la-spezia-theme') === 'dark' ? 'dark' : 'light'
-    } catch {
-      return 'light'
-    }
-  })
+  const [showOpeningVideo, setShowOpeningVideo] = useState(
+    () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  const [showBackgroundVideo, setShowBackgroundVideo] = useState(
+    () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
   const sidebarOpen = sidebarMode === 'hover' || sidebarMode === 'pinned'
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    try {
-      window.localStorage.setItem('la-spezia-theme', theme)
-    } catch {
-      // The current session still uses the selected theme if storage is unavailable.
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updateVideo = () => {
+      setShowBackgroundVideo(!motionPreference.matches)
+      if (motionPreference.matches) setShowOpeningVideo(false)
     }
-  }, [theme])
+    motionPreference.addEventListener('change', updateVideo)
+    return () => motionPreference.removeEventListener('change', updateVideo)
+  }, [])
 
   const handleSidebarPointerEnter = () => {
     setSidebarMode((mode) => mode === 'closed' ? 'hover' : mode)
@@ -46,24 +47,46 @@ export default function App() {
   const openSidebar = () => setSidebarMode('pinned')
 
   return (
-    <div className="app-shell">
+    <div className="app-shell relative grid h-dvh min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-cyber-bg text-cyber-text">
       <AppNavbar sidebarOpen={sidebarOpen} onSidebarToggle={toggleSidebar} />
-      <div className={`workspace-layout${sidebarOpen ? ' is-sidebar-open' : ''}`}>
+      <div
+        className={cn(
+          'workspace-layout grid min-h-0 min-w-0 overflow-hidden transition-[grid-template-columns] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]',
+          sidebarOpen
+            ? 'grid-cols-[var(--sidebar-expanded-width)_minmax(0,1fr)]'
+            : 'grid-cols-[var(--sidebar-rail-width)_minmax(0,1fr)]',
+        )}
+      >
         <AppSidebar
           sidebarOpen={sidebarOpen}
           currentPage={currentPage}
-          theme={theme}
-          onThemeToggle={() => setTheme((currentTheme) => currentTheme === 'light' ? 'dark' : 'light')}
           onNavigate={navigateTo}
           onSidebarOpen={openSidebar}
           onPointerEnter={handleSidebarPointerEnter}
           onPointerLeave={handleSidebarPointerLeave}
         />
-        <div className="page-container">
+        <main className="page-container relative min-h-0 min-w-0 overflow-hidden">
+          {showBackgroundVideo && (
+            <video
+              className="page-background-video"
+              src="/videos/background-loop.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              disablePictureInPicture
+              disableRemotePlayback
+              aria-hidden="true"
+              tabIndex={-1}
+            />
+          )}
           {currentPage === 'leaderboard' ? <LeaderboardPage /> : <MatchHistoryPage />}
-        </div>
+        </main>
       </div>
-      <RainbowSpadeCursor />
+      <AnimatePresence initial={false}>
+        {showOpeningVideo && <OpeningVideo onFinish={() => setShowOpeningVideo(false)} />}
+      </AnimatePresence>
     </div>
   )
 }
