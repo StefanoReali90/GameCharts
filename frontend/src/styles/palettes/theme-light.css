@@ -1,0 +1,22 @@
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-background: #f8f9fa;
+  --color-surface: #fff;
+  --color-text: #212529;
+  --color-ink: #000;
+  --color-border: #212529;
+  --color-cyan: #00d2ff;
+  --color-yellow: #f1c40f;
+  --color-red: #e74c3c;
+  --color-green: #2ecc71;
+  --color-silver: #9aa0a6;
+  --color-bronze: #cd7f32;
+  --color-chrome-background: #212529;
+  --color-chrome-text: #f8f9fa;
+  --color-chrome-border: #f8f9fa;
+  --color-cyan-rgb: 0 210 255;
+  --color-yellow-rgb: 241 196 15;
+  --color-silver-rgb: 154 160 166;
+  --color-bronze-rgb: 205 127 50;
+}

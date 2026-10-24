@@ -1,0 +1,23 @@
+// Ogni elemento è un risultato mock; la classifica somma i risultati per giocatore.
+export const leaderboardEntries = [
+  { id: 'result-01', playerId: 1, name: 'Luca Rossi', score: 110, date: '2026-10-22', avatar: 'mario' },
+  { id: 'result-02', playerId: 1, name: 'Luca Rossi', score: 80, date: '2025-02-10', avatar: 'mario' },
+  { id: 'result-03', playerId: 2, name: 'Giulia Bianchi', score: 95, date: '2026-10-20', avatar: 'ash' },
+  { id: 'result-04', playerId: 2, name: 'Giulia Bianchi', score: 120, date: '2024-08-15', avatar: 'ash' },
+  { id: 'result-05', playerId: 3, name: 'Marco Ferrari', score: 88, date: '2026-10-18', avatar: 'kirby' },
+  { id: 'result-06', playerId: 3, name: 'Marco Ferrari', score: 100, date: '2025-11-01', avatar: 'kirby' },
+  { id: 'result-07', playerId: 4, name: 'Sara Romano', score: 70, date: '2026-07-01', avatar: 'bulbasaur' },
+  { id: 'result-08', playerId: 4, name: 'Sara Romano', score: 80, date: '2025-05-28', avatar: 'bulbasaur' },
+  { id: 'result-09', playerId: 5, name: 'Matteo Gallo', score: 65, date: '2026-10-13', avatar: 'charmander' },
+  { id: 'result-10', playerId: 5, name: 'Matteo Gallo', score: 110, date: '2024-12-18', avatar: 'charmander' },
+  { id: 'result-11', playerId: 6, name: 'Elena Costa', score: 60, date: '2026-08-08', avatar: 'squirtle' },
+  { id: 'result-12', playerId: 6, name: 'Elena Costa', score: 100, date: '2025-08-21', avatar: 'squirtle' },
+  { id: 'result-13', playerId: 7, name: 'Andrea Fontana', score: 55, date: '2026-10-08', avatar: 'octocat' },
+  { id: 'result-14', playerId: 7, name: 'Andrea Fontana', score: 70, date: '2025-03-14', avatar: 'octocat' },
+  { id: 'result-15', playerId: 8, name: 'Chiara Conti', score: 47, date: '2026-08-03', avatar: 'bcrikko' },
+  { id: 'result-16', playerId: 8, name: 'Chiara Conti', score: 60, date: '2024-10-02', avatar: 'bcrikko' },
+  { id: 'result-17', playerId: 9, name: 'Davide Marino', score: 42, date: '2026-10-01', avatar: 'pokeball' },
+  { id: 'result-18', playerId: 9, name: 'Davide Marino', score: 68, date: '2025-07-07', avatar: 'pokeball' },
+  { id: 'result-19', playerId: 10, name: 'Francesca Greco', score: 38, date: '2026-05-05', avatar: 'mario' },
+  { id: 'result-20', playerId: 10, name: 'Francesca Greco', score: 60, date: '2024-06-18', avatar: 'mario' },
+]

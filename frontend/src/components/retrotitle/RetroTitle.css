@@ -1,0 +1,182 @@
+.retro-title {
+  --retro-frame-inset: 4px;
+  --retro-shadow-offset: 6px;
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  color: var(--color-ink);
+  font-family: 'Press Start 2P', cursive;
+  line-height: 1.7;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  isolation: isolate;
+}
+
+.retro-title::before {
+  position: absolute;
+  z-index: 0;
+  inset: var(--retro-frame-inset);
+  background: var(--color-background);
+  content: '';
+}
+
+.retro-title__gradient-window {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.retro-title__gradient-window--shadow {
+  z-index: -2;
+  opacity: 0.55;
+  filter: blur(3px);
+  transform: translate(var(--retro-shadow-offset), var(--retro-shadow-offset)) scale(0.99);
+}
+
+.retro-title__gradient-window--frame {
+  z-index: -1;
+}
+
+.retro-title__gradient {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 300%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-cyan) 0%,
+    var(--color-yellow) 8.333%,
+    var(--color-red) 16.666%,
+    var(--color-green) 25%,
+    var(--color-cyan) 33.333%
+  );
+  animation: retro-title-flow 5s linear infinite;
+}
+
+.retro-title__text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  position: relative;
+  z-index: 1;
+}
+
+.retro-title__label {
+  position: relative;
+  display: inline-block;
+}
+
+.retro-title__label-text {
+  position: relative;
+  z-index: 1;
+  color: var(--color-ink);
+}
+
+.retro-title--brand .retro-title__label-text {
+  color: var(--color-chrome-text);
+  text-shadow:
+    0 0 3px var(--color-cyan),
+    0 0 10px rgb(var(--color-cyan-rgb) / 60%);
+}
+
+.retro-title__label-shadow {
+  position: absolute;
+  z-index: 0;
+  top: 2px;
+  left: 2px;
+  color: transparent;
+  white-space: nowrap;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-cyan) 0%,
+    var(--color-yellow) 8.333%,
+    var(--color-red) 16.666%,
+    var(--color-green) 25%,
+    var(--color-cyan) 33.333%
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(0.75px);
+  animation: retro-text-flow 5s linear infinite;
+}
+
+.brand-logo {
+  display: block;
+  width: clamp(34px, 3.5vw, 48px);
+  height: clamp(30px, 3.1vw, 42px);
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.retro-title--brand {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.5rem 1.25rem;
+  font-size: clamp(1.15rem, 2.6vw, 1.8rem);
+}
+
+.retro-title--brand::before,
+.retro-title--brand .retro-title__gradient-window {
+  display: none;
+}
+
+.retro-title--panel {
+  font-size: clamp(0.8rem, 1.4vw, 1.1rem);
+}
+
+.panel-heading {
+  display: grid;
+  justify-items: center;
+  padding: 0 0.25rem;
+}
+
+@keyframes retro-title-flow {
+  to {
+    transform: translateX(-66.6667%);
+  }
+}
+
+@keyframes retro-text-flow {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .retro-title {
+    --retro-frame-inset: 3px;
+    --retro-shadow-offset: 3px;
+  }
+
+  .retro-title__gradient-window--shadow {
+    filter: blur(2px);
+  }
+
+  .retro-title--brand {
+    font-size: clamp(0.95rem, 4.5vw, 1.35rem);
+    padding: 0.45rem 0.75rem;
+  }
+
+  .retro-title__text {
+    gap: 0.45rem;
+  }
+
+  .brand-logo {
+    width: 32px;
+    height: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retro-title__gradient,
+  .retro-title__label-shadow {
+    animation: none;
+  }
+}

@@ -1,8 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import 'nes.css/css/nes.min.css';
+@import './styles/palettes/theme-light.css';
+@import './styles/palettes/theme-dark.css';
+
 :root {
   font-family: 'Press Start 2P', cursive;
-  color: #212529;
-  background: #f8f9fa;
+  color: var(--color-text);
+  background: var(--color-background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,26 +27,27 @@ body,
 
 body {
   min-height: 100vh;
+  overflow: hidden;
   font-family: 'Press Start 2P', cursive;
+  color: var(--color-text);
+  background: var(--color-background);
+  cursor: auto;
 }
 
-.app-shell {
-  display: flex;
-  min-height: 100vh;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem;
+.nes-btn {
+  cursor: pointer;
+  color: var(--color-text);
+  background-color: var(--color-surface);
 }
 
-.app-shell h1 {
-  max-width: 100%;
-  font-size: clamp(1rem, 3vw, 1.75rem);
-  line-height: 1.8;
-  text-align: center;
+.nes-btn:not(.is-primary):hover {
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
-@media (max-width: 600px) {
-  .app-shell {
-    padding: 1rem;
-  }
+.nes-input,
+.nes-textarea,
+.nes-select select {
+  color: var(--color-text);
+  background-color: var(--color-surface);
 }
