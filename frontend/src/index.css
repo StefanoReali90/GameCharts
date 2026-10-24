@@ -1,3 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+:root {
+  font-family: 'Press Start 2P', cursive;
+  color: #212529;
+  background: #f8f9fa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -12,11 +23,26 @@ body,
 
 body {
   min-height: 100vh;
-  font-family: system-ui, sans-serif;
+  font-family: 'Press Start 2P', cursive;
 }
 
-main {
-  display: grid;
+.app-shell {
+  display: flex;
   min-height: 100vh;
-  place-items: center;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+}
+
+.app-shell h1 {
+  max-width: 100%;
+  font-size: clamp(1rem, 3vw, 1.75rem);
+  line-height: 1.8;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    padding: 1rem;
+  }
 }

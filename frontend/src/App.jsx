@@ -1,3 +1,7 @@
 export default function App() {
-  return <main>Classifica La Spezia</main>
+  return (
+    <main className="app-shell">
+      <h1>La Spezia Leaderboard</h1>
+    </main>
+  )
 }
