@@ -25,7 +25,7 @@ export default function AppSidebar({
   return (
     <aside
       id="app-sidebar"
-      className="app-sidebar relative z-20 h-full min-w-0 overflow-hidden bg-cyber-surface"
+      className="app-sidebar relative z-20 h-full min-w-0 overflow-hidden"
       aria-label="Navigazione principale"
       onPointerEnter={onPointerEnter}
       onPointerMove={onPointerEnter}

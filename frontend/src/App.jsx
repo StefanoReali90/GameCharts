@@ -12,6 +12,9 @@ export default function App() {
   const [showOpeningVideo, setShowOpeningVideo] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
+  const [podiumEntranceReady, setPodiumEntranceReady] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
   const [showBackgroundVideo, setShowBackgroundVideo] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -48,8 +51,24 @@ export default function App() {
 
   return (
     <div className="app-shell relative grid h-dvh min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-cyber-bg text-cyber-text">
+      {showBackgroundVideo && (
+        <video
+          className="app-background-video"
+          src="/videos/background-loop.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          disablePictureInPicture
+          disableRemotePlayback
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+      )}
       <AppNavbar sidebarOpen={sidebarOpen} onSidebarToggle={toggleSidebar} />
       <div
+        data-sidebar-open={sidebarOpen}
         className={cn(
           'workspace-layout grid min-h-0 min-w-0 overflow-hidden transition-[grid-template-columns] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]',
           sidebarOpen
@@ -66,25 +85,10 @@ export default function App() {
           onPointerLeave={handleSidebarPointerLeave}
         />
         <main className="page-container relative min-h-0 min-w-0 overflow-hidden">
-          {showBackgroundVideo && (
-            <video
-              className="page-background-video"
-              src="/videos/background-loop.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              disablePictureInPicture
-              disableRemotePlayback
-              aria-hidden="true"
-              tabIndex={-1}
-            />
-          )}
-          {currentPage === 'leaderboard' ? <LeaderboardPage /> : <MatchHistoryPage />}
+          {currentPage === 'leaderboard' ? <LeaderboardPage entranceReady={podiumEntranceReady} /> : <MatchHistoryPage />}
         </main>
       </div>
-      <AnimatePresence initial={false}>
+      <AnimatePresence initial={false} onExitComplete={() => setPodiumEntranceReady(true)}>
         {showOpeningVideo && <OpeningVideo onFinish={() => setShowOpeningVideo(false)} />}
       </AnimatePresence>
     </div>

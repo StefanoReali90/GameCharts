@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Maximize2, Minimize2 } from 'lucide-react'
+import { useReducedMotion } from 'framer-motion'
 import mockData from '../../data/mockData.json'
 import { buildLeaderboard } from '../../utils/leaderboard.js'
 import { cn } from '../../lib/utils.ts'
@@ -9,12 +10,26 @@ import LeaderboardFilters from './LeaderboardFilters.jsx'
 import LeaderboardPodium from './LeaderboardPodium.jsx'
 import LeaderboardTable from './LeaderboardTable.jsx'
 
-export default function Leaderboard({ data = mockData }) {
+export default function Leaderboard({ data = mockData, entranceReady = true }) {
   const [search, setSearch] = useState('')
   const [gameId, setGameId] = useState(String(data.games[0]?.id ?? ''))
   const years = [...new Set(data.matches.map((match) => match.registeredAt.slice(0, 4)))].sort().reverse()
   const [year, setYear] = useState(years[0] ?? String(new Date().getFullYear()))
   const [tableExpanded, setTableExpanded] = useState(false)
+  const [podiumHeight, setPodiumHeight] = useState(null)
+  const podiumRef = useRef(null)
+  const reducedMotion = useReducedMotion()
+
+  useLayoutEffect(() => {
+    const podium = podiumRef.current
+    if (!podium) return undefined
+
+    const measure = () => setPodiumHeight(Math.ceil(podium.scrollHeight))
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(podium)
+    return () => observer.disconnect()
+  }, [])
 
   const rankedPlayers = useMemo(() => {
     const query = search.trim().toLocaleLowerCase('it-IT')
@@ -23,19 +38,26 @@ export default function Leaderboard({ data = mockData }) {
       .filter((player) => player.name.toLocaleLowerCase('it-IT').includes(query))
   }, [data, gameId, year, search])
 
-  const tablePlayers = tableExpanded
-    ? rankedPlayers
-    : rankedPlayers.filter((player) => player.position > 3)
-
   return (
     <div className={cn(
-      'leaderboard-content grid min-h-0 gap-4 overflow-visible',
-      tableExpanded
-        ? 'h-full grid-rows-[minmax(0,1fr)]'
-        : 'h-full grid-rows-[auto_minmax(0,1fr)] max-[760px]:h-auto max-[760px]:min-h-full',
-    )}>
-      {!tableExpanded && <LeaderboardPodium players={rankedPlayers.filter((player) => player.position <= 3)} />}
-      <NeonCard as="section" tone="cyan" tilt={0.4} float={0.6} duration={6.8} className="leaderboard-results flex min-h-0 flex-col overflow-hidden p-4 sm:p-5" aria-label="Classifica giocatori">
+      'leaderboard-content grid min-h-0 overflow-visible',
+      podiumHeight !== null && !reducedMotion && 'transition-[grid-template-rows,row-gap] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]',
+      tableExpanded ? 'h-full' : 'h-full max-[760px]:h-auto max-[760px]:min-h-full',
+    )}
+      style={{
+        gridTemplateRows: podiumHeight === null ? 'auto minmax(0, 1fr)' : `${tableExpanded ? 0 : podiumHeight}px minmax(0, 1fr)`,
+        rowGap: tableExpanded ? 0 : 16,
+      }}
+    >
+      <div className="min-h-0 self-start" aria-hidden={tableExpanded || !entranceReady} inert={tableExpanded}>
+        <LeaderboardPodium
+          podiumRef={podiumRef}
+          expanded={tableExpanded}
+          entranceReady={entranceReady}
+          players={rankedPlayers.filter((player) => player.position <= 3)}
+        />
+      </div>
+      <NeonCard as="section" tone="cyan" tilt={0.4} float={0.6} duration={6.8} className="leaderboard-results flex min-h-0 flex-1 flex-col overflow-hidden p-4 sm:p-5" aria-label="Classifica giocatori">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h3 className="m-0 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">Risultati</h3>
           <NeonButton
@@ -61,7 +83,7 @@ export default function Leaderboard({ data = mockData }) {
           onYearChange={setYear}
           years={years}
         />
-        <LeaderboardTable players={tablePlayers} hasPodium={!tableExpanded && rankedPlayers.some((player) => player.position <= 3)} />
+        <LeaderboardTable players={rankedPlayers} expanded={tableExpanded} hasPodium={!tableExpanded && rankedPlayers.some((player) => player.position <= 3)} />
       </NeonCard>
     </div>
   )
