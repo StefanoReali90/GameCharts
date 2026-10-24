@@ -1,4 +1,9 @@
 package org.spring.gamechartprojects.dto;
 
-public record PlayerScoreRequest() {
+public record PlayerScoreRequest(
+        Long playerId,
+        Integer score
+) {
+
+
 }

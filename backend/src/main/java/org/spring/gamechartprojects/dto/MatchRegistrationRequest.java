@@ -1,4 +1,10 @@
 package org.spring.gamechartprojects.dto;
 
-public record MatchRegistrationRequest() {
+import java.util.List;
+
+public record MatchRegistrationRequest(
+        Long gameId,
+        Long callerId,
+        List<PlayerScoreRequest> playerScores
+) {
 }
