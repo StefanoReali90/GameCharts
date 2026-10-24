@@ -2,9 +2,11 @@ package org.spring.gamechartprojects.service;
 
 import lombok.RequiredArgsConstructor;
 import org.spring.gamechartprojects.dto.MatchRegistrationRequest;
+import org.spring.gamechartprojects.dto.PlayerScoreRequest;
 import org.spring.gamechartprojects.entity.Match;
 import org.spring.gamechartprojects.entity.MatchResult;
 import org.spring.gamechartprojects.entity.Player;
+import org.spring.gamechartprojects.exception.ResourceNotFoundException;
 import org.spring.gamechartprojects.repository.GameRepository;
 import org.spring.gamechartprojects.repository.MatchRepository;
 import org.spring.gamechartprojects.repository.PlayerRepository;
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,57 +29,69 @@ public class MatchService {
     private final PlayerRepository playerRepository;
 
     @Transactional
-    public void registerMatch(MatchRegistrationRequest request){
-        HashSet<Long> players = new HashSet<>();
-        if (request == null || request.playerScores() == null || request.gameId() == null) {
+    public Match registerMatch(MatchRegistrationRequest request) {
+        if (request == null) {
             throw new IllegalArgumentException("Request cannot be null");
         }
-        Match match = new Match();
-        match.setGame(gameRepository.findById(request.gameId()).orElseThrow(() -> new RuntimeException("Game not found")));
-        if(request.playerScores().isEmpty()){
+        if (request.gameId() == null) {
+            throw new IllegalArgumentException("Game ID cannot be null");
+        }
+        if (request.playerScores() == null || request.playerScores().isEmpty()) {
             throw new IllegalArgumentException("Player scores cannot be empty");
         }
-        for(var playerScoreRequest : request.playerScores()){
-            if(playerScoreRequest == null){
+        if (request.winnerIds() == null || request.winnerIds().isEmpty()) {
+            throw new IllegalArgumentException("At least one winner must be selected");
+        }
+
+        Set<Long> participantIds = new HashSet<>();
+        for (PlayerScoreRequest playerScore : request.playerScores()) {
+            if (playerScore == null) {
                 throw new IllegalArgumentException("PlayerScoreRequest cannot be null");
             }
-            if (playerScoreRequest.score() == null) {
-                throw new IllegalArgumentException("Player score cannot be null");
-            }
-            if (playerScoreRequest.playerId() == null) {
+            if (playerScore.playerId() == null) {
                 throw new IllegalArgumentException("Player ID cannot be null");
             }
-            Player playerIds = playerRepository.findById(playerScoreRequest.playerId()).orElseThrow(() -> new RuntimeException("Player not found"));
-            MatchResult matchResult = new MatchResult();
-            boolean playerId = players.add(playerIds.getId());
-
-            matchResult.setPlayer(playerIds);
-            matchResult.setScore(playerScoreRequest.score());
-            if (!playerId) {
+            if (playerScore.score() == null) {
+                throw new IllegalArgumentException("Player score cannot be null");
+            }
+            if (!participantIds.add(playerScore.playerId())) {
                 throw new IllegalArgumentException("Player already added to match");
             }
+        }
 
+        Set<Long> winnerIds = new HashSet<>();
+        for (Long winnerId : request.winnerIds()) {
+            if (winnerId == null) {
+                throw new IllegalArgumentException("Winner ID cannot be null");
+            }
+            if (!winnerIds.add(winnerId)) {
+                throw new IllegalArgumentException("Winner already selected for match");
+            }
+            if (!participantIds.contains(winnerId)) {
+                throw new IllegalArgumentException("Winner must be one of the players in the match");
+            }
+        }
+
+        Match match = new Match();
+        match.setGame(gameRepository.findById(request.gameId())
+                .orElseThrow(() -> new ResourceNotFoundException("Game not found")));
+
+        List<Player> winners = new ArrayList<>();
+        for (PlayerScoreRequest playerScore : request.playerScores()) {
+            Player player = playerRepository.findById(playerScore.playerId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Player not found: " + playerScore.playerId()));
+            MatchResult matchResult = new MatchResult();
+            matchResult.setPlayer(player);
+            matchResult.setScore(playerScore.score());
             match.addMatchResult(matchResult);
+
+            if (winnerIds.contains(player.getId())) {
+                winners.add(player);
+            }
         }
-        if(request.callerId() == null) {
-            throw new IllegalArgumentException("Caller not found");
-        }
-        if(!players.contains(request.callerId())){
-            throw new IllegalArgumentException("Caller must be one of the players in the match");
-        }
-        match.setCaller(playerRepository.findById(request.callerId()).orElseThrow(() -> new RuntimeException("Caller not found")));
-        Integer minScore = match.getMatchResults().stream().mapToInt(MatchResult::getScore).min().orElseThrow(() -> new RuntimeException("No scores found"));
-        ArrayList<Player> winners = new ArrayList<>(match.getMatchResults().stream().filter(mr -> mr.getScore().equals(minScore)).map(MatchResult::getPlayer).toList());
-        if(winners.size() > 1){
-            winners.remove(match.getCaller());
-        }
+
         match.setWinners(winners);
         match.setRegisteredAt(LocalDateTime.now(ZoneId.of("Europe/Rome")));
-
-
-        matchRepository.save(match);
-
+        return matchRepository.save(match);
     }
-
-
 }

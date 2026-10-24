@@ -4,7 +4,7 @@ import java.util.List;
 
 public record MatchRegistrationRequest(
         Long gameId,
-        Long callerId,
+        List<Long> winnerIds,
         List<PlayerScoreRequest> playerScores
 ) {
 }
