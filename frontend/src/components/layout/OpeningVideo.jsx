@@ -11,7 +11,7 @@ export default function OpeningVideo({ onFinish }) {
     <motion.div
       className="fixed inset-0 z-50 overflow-hidden bg-cyber-bg"
       exit={{ opacity: 0, scale: 1.035 }}
-      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
     >
       <video
         className="absolute inset-0 h-full w-full object-cover"

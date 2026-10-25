@@ -88,8 +88,11 @@ export default function App() {
           {currentPage === 'leaderboard' ? <LeaderboardPage entranceReady={podiumEntranceReady} /> : <MatchHistoryPage />}
         </main>
       </div>
-      <AnimatePresence initial={false} onExitComplete={() => setPodiumEntranceReady(true)}>
-        {showOpeningVideo && <OpeningVideo onFinish={() => setShowOpeningVideo(false)} />}
+      <AnimatePresence initial={false}>
+        {showOpeningVideo && <OpeningVideo onFinish={() => {
+          setPodiumEntranceReady(true)
+          setShowOpeningVideo(false)
+        }} />}
       </AnimatePresence>
     </div>
   )

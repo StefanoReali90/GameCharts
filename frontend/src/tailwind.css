@@ -293,6 +293,40 @@
   background: rgb(var(--cyber-cyan) / 0.09);
 }
 
+.leaderboard-table tbody tr {
+  border-top: 1px solid rgb(255 255 255 / 0.05);
+}
+
+.leaderboard-data-row td {
+  padding: 0;
+}
+
+.leaderboard-cell {
+  display: flex;
+  height: 56px;
+  align-items: center;
+  overflow: hidden;
+}
+
+.leaderboard-table tr[data-rank] .leaderboard-cell {
+  height: 0;
+  opacity: 0;
+  transition: height 700ms cubic-bezier(0.22, 1, 0.36, 1), opacity 350ms ease;
+}
+
+.leaderboard-table[data-expanded='true'] tr[data-rank] .leaderboard-cell {
+  height: 56px;
+  opacity: 1;
+}
+
+.leaderboard-table tr[data-rank] {
+  border-color: transparent;
+}
+
+.leaderboard-table[data-expanded='true'] tr[data-rank] {
+  border-color: rgb(255 255 255 / 0.05);
+}
+
 .leaderboard-table tr[data-rank='1'] {
   background: rgb(255 216 94 / 0.08);
 }
