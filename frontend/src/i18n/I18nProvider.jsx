@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import english from './en.json'
+import italian from './it.json'
 
-const localeFiles = import.meta.glob(['./*.json', '!./en.json'], { import: 'default' })
-const loadedMessages = { en: english }
+const localeFiles = import.meta.glob(['./*.json', '!./en.json', '!./it.json'], { import: 'default' })
+const loadedMessages = { en: english, it: italian }
 const storageKey = 'gamechart-language-v2'
 
 export const languages = [
@@ -36,17 +37,16 @@ function loadLanguage() {
   } catch {
     // La scelta resta modificabile anche senza localStorage.
   }
-  return 'en'
+  return 'it'
 }
 
 const I18nContext = createContext(null)
 
 export function I18nProvider({ children }) {
   const [language, setLanguage] = useState(loadLanguage)
-  const [messages, setMessages] = useState(() => loadedMessages[language] ?? english)
-  const savedLanguage = useRef(language)
+  const [messages, setMessages] = useState(() => loadedMessages[language] ?? italian)
   const t = useCallback((key, values = {}) => {
-    const template = messages[key] ?? english[key] ?? key
+    const template = messages[key] ?? italian[key] ?? english[key] ?? key
     return template.replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''))
   }, [messages])
   const locale = language === 'zh' ? 'zh-CN' : language
@@ -61,7 +61,7 @@ export function I18nProvider({ children }) {
       loadedMessages[language] = dictionary
       if (active) setMessages(dictionary)
     }).catch(() => {
-      if (active) setLanguage('en')
+      if (active) setLanguage('it')
     })
     return () => { active = false }
   }, [language])
@@ -72,13 +72,21 @@ export function I18nProvider({ children }) {
     document.title = t('app.title')
   }, [language, t])
 
-  const saveLanguage = () => {
-    savedLanguage.current = language
-    try { window.localStorage.setItem(storageKey, language) } catch { /* Stato valido per la sessione. */ }
-  }
-  const discardLanguage = () => setLanguage(savedLanguage.current)
+  const preloadLanguage = useCallback((code) => {
+    if (loadedMessages[code]) return Promise.resolve(loadedMessages[code])
+    return localeFiles[`./${code}.json`]?.().then((dictionary) => {
+      loadedMessages[code] = dictionary
+      return dictionary
+    }) ?? Promise.reject(new Error('Unsupported language'))
+  }, [])
 
-  const value = useMemo(() => ({ language, setLanguage, t, locale, saveLanguage, discardLanguage }), [language, t, locale])
+  const saveLanguage = (nextLanguage = language) => {
+    const selected = languages.some((item) => item.code === nextLanguage) ? nextLanguage : 'it'
+    if (loadedMessages[selected]) setMessages(loadedMessages[selected])
+    setLanguage(selected)
+    try { window.localStorage.setItem(storageKey, selected) } catch { /* Stato valido per la sessione. */ }
+  }
+  const value = useMemo(() => ({ language, t, locale, preloadLanguage, saveLanguage }), [language, t, locale, preloadLanguage])
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }
 

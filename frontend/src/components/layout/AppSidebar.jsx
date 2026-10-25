@@ -87,7 +87,7 @@ export default function AppSidebar({
             <span className="flex-1">{t('nav.settings')}</span>
           </NeonButton>
         </div>
-        <div className="sidebar-footer px-3 pb-2 pt-3 text-[10px] font-medium uppercase tracking-[0.18em] text-cyber-muted/60">
+        <div className="sidebar-footer px-3 pb-2 pt-3 text-[10px] font-medium capitalize tracking-[0.18em] text-cyber-muted/60">
           {t('app.footer')}
         </div>
       </div>

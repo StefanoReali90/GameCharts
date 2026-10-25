@@ -15,7 +15,7 @@
   "settings.languageHelp": "인터페이스 언어를 선택하세요.",
   "settings.save": "저장",
   "settings.restore": "기본 설정 복원",
-  "settings.restoreHint": "오디오와 언어를 초기값으로 되돌립니다: 효과음 67%, 음악 4%, 영어.",
+  "settings.restoreHint": "오디오와 언어를 초기값으로 되돌립니다: 효과음 67%, 음악 4%, 이탈리아어.",
   "settings.alreadyDefault": "설정이 이미 기본값입니다.",
   "dialog.close": "닫기",
   "leaderboard.title": "순위표",
@@ -28,13 +28,13 @@
   "leaderboard.wins": "{count}승",
   "leaderboard.winOne": "승",
   "leaderboard.winMany": "승",
-  "leaderboard.streak": "연승 {count} · 최고 기록 {score}",
+  "leaderboard.streak": "연승 {count} · 최저 점수 {score}",
   "leaderboard.waiting": "대기 중",
   "leaderboard.position": "순위",
   "leaderboard.player": "플레이어",
   "leaderboard.winsColumn": "승리",
-  "leaderboard.streakColumn": "연승",
-  "leaderboard.best": "최고 합계",
+  "leaderboard.streakColumn": "현재 연승",
+  "leaderboard.best": "최저 점수",
   "leaderboard.emptyOthers": "순위표에 다른 플레이어가 없습니다",
   "leaderboard.empty": "이 필터에 대한 결과가 없습니다",
   "profile.cards": "{name}의 프로필 사진: {cards}",
@@ -74,5 +74,6 @@
   "leaderboard.sortBy": "{column} {direction} 정렬",
   "leaderboard.ascending": "오름차순",
   "leaderboard.descending": "내림차순",
-  "leaderboard.cancel": "취소"
+  "leaderboard.cancel": "취소",
+  "leaderboard.bestStreak": "최고 연승"
 }

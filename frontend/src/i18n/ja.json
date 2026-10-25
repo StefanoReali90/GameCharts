@@ -15,7 +15,7 @@
   "settings.languageHelp": "画面の言語を選択してください。",
   "settings.save": "保存",
   "settings.restore": "初期設定に戻す",
-  "settings.restoreHint": "音声と言語を初期値に戻します：効果音 67%、音楽 4%、英語。",
+  "settings.restoreHint": "音声と言語を初期値に戻します：効果音 67%、音楽 4%、イタリア語。",
   "settings.alreadyDefault": "設定はすでに初期値です。",
   "dialog.close": "閉じる",
   "leaderboard.title": "ランキング",
@@ -28,13 +28,13 @@
   "leaderboard.wins": "{count}勝",
   "leaderboard.winOne": "勝",
   "leaderboard.winMany": "勝",
-  "leaderboard.streak": "連勝 {count} · 最高記録 {score}",
+  "leaderboard.streak": "連勝 {count} · 最低スコア {score}",
   "leaderboard.waiting": "待機中",
   "leaderboard.position": "順位",
   "leaderboard.player": "プレイヤー",
   "leaderboard.winsColumn": "勝利数",
-  "leaderboard.streakColumn": "連勝数",
-  "leaderboard.best": "最高合計",
+  "leaderboard.streakColumn": "現在の連勝",
+  "leaderboard.best": "最低スコア",
   "leaderboard.emptyOthers": "ランキングに他のプレイヤーはいません",
   "leaderboard.empty": "この条件に一致する結果はありません",
   "profile.cards": "{name}のプロフィール画像：{cards}",
@@ -74,5 +74,6 @@
   "leaderboard.sortBy": "{column}を{direction}で並べ替え",
   "leaderboard.ascending": "昇順",
   "leaderboard.descending": "降順",
-  "leaderboard.cancel": "キャンセル"
+  "leaderboard.cancel": "キャンセル",
+  "leaderboard.bestStreak": "最高連勝"
 }

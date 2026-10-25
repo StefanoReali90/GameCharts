@@ -5,7 +5,7 @@ import OpeningVideo from './components/layout/OpeningVideo.jsx'
 import SettingsDialog from './components/layout/SettingsDialog.jsx'
 import LeaderboardPage from './pages/leaderboard/LeaderboardPage.jsx'
 import MatchHistoryPage from './pages/match-history/MatchHistoryPage.jsx'
-import { addMatch, loadMatchData, saveMatchData } from './data/matchStore.js'
+import { loadMatchData } from './data/matchStore.js'
 import { playButtonClick, playPageChange, unlockEffectsAudio } from './utils/uiSounds.js'
 import { useAudioSettings } from './hooks/useAudioSettings.js'
 import { useI18n } from './i18n/I18nProvider.jsx'
@@ -14,7 +14,7 @@ export default function App() {
   const [sidebarMode, setSidebarMode] = useState('closed')
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('leaderboard')
-  const [matchData, setMatchData] = useState(loadMatchData)
+  const [matchData] = useState(loadMatchData)
   const [showOpeningVideo, setShowOpeningVideo] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -22,7 +22,7 @@ export default function App() {
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
   const audio = useAudioSettings(openingVideoExited)
-  const { saveLanguage, discardLanguage } = useI18n()
+  const { saveLanguage } = useI18n()
   const [podiumEntranceReady, setPodiumEntranceReady] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -112,12 +112,6 @@ export default function App() {
 
   const openSidebar = () => setSidebarMode('pinned')
 
-  const handleAddMatch = (winnerId, winnerScores) => {
-    const nextData = addMatch(matchData, winnerId, winnerScores)
-    setMatchData(nextData)
-    saveMatchData(nextData)
-  }
-
   return (
     <div
       className="app-shell relative grid h-dvh min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-cyber-bg text-cyber-text"
@@ -168,19 +162,18 @@ export default function App() {
         <main className="page-container relative min-h-0 min-w-0 overflow-hidden">
           {currentPage === 'leaderboard'
             ? <LeaderboardPage entranceReady={podiumEntranceReady} entranceFinished={podiumEntranceFinished} onEntranceComplete={() => setPodiumEntranceFinished(true)} data={matchData} />
-            : <MatchHistoryPage data={matchData} onAddMatch={handleAddMatch} />}
+            : <MatchHistoryPage data={matchData} />}
         </main>
       </div>
       <SettingsDialog
         open={settingsOpen}
         onClose={() => {
           audio.discardSettings()
-          discardLanguage()
           setSettingsOpen(false)
         }}
-        onSave={() => {
+        onSave={(nextLanguage) => {
           audio.saveSettings()
-          saveLanguage()
+          saveLanguage(nextLanguage)
           setSettingsOpen(false)
         }}
         effectsVolume={audio.settings.effectsVolume}

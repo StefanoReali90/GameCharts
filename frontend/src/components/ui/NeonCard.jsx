@@ -14,10 +14,11 @@ const toneClasses = {
 
 export default function NeonCard({
   as: Element = 'div', tone = 'neutral', className, children,
-  tilt = 5, float = 3, duration = 5, style, onPointerMove, onPointerLeave, ...props
+  tilt = 5, pressTilt = 0, float = 3, duration = 5, style,
+  onPointerMove, onPointerLeave, onPointerDown, onPointerUp, onPointerCancel, ...props
 }) {
   const Card = motion[Element] ?? motion.div
-  const floating = useFloatingTilt({ tilt, float, duration })
+  const floating = useFloatingTilt({ tilt, pressTilt, float, duration })
 
   return (
     <Card
@@ -31,6 +32,9 @@ export default function NeonCard({
       transition={floating.transition}
       onPointerMove={(event) => { floating.onPointerMove(event); onPointerMove?.(event) }}
       onPointerLeave={(event) => { floating.onPointerLeave(); onPointerLeave?.(event) }}
+      onPointerDown={(event) => { floating.onPointerDown(event); onPointerDown?.(event) }}
+      onPointerUp={(event) => { floating.onPointerUp(event); onPointerUp?.(event) }}
+      onPointerCancel={(event) => { floating.onPointerCancel(); onPointerCancel?.(event) }}
       {...props}
     >
       {children}

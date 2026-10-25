@@ -15,7 +15,7 @@
   "settings.languageHelp": "选择界面语言。",
   "settings.save": "保存",
   "settings.restore": "恢复默认设置",
-  "settings.restoreHint": "将音频和语言恢复为默认值：音效 67%，音乐 4%，英语。",
+  "settings.restoreHint": "将音频和语言恢复为默认值：音效 67%，音乐 4%，意大利语。",
   "settings.alreadyDefault": "设置已经是默认值。",
   "dialog.close": "关闭",
   "leaderboard.title": "排行榜",
@@ -28,13 +28,13 @@
   "leaderboard.wins": "{count} 场胜利",
   "leaderboard.winOne": "场胜利",
   "leaderboard.winMany": "场胜利",
-  "leaderboard.streak": "连胜 {count} · 最高分 {score}",
+  "leaderboard.streak": "连胜 {count} · 最低分 {score}",
   "leaderboard.waiting": "等待中",
   "leaderboard.position": "排名",
   "leaderboard.player": "玩家",
   "leaderboard.winsColumn": "胜场",
-  "leaderboard.streakColumn": "连胜",
-  "leaderboard.best": "最高总分",
+  "leaderboard.streakColumn": "当前连胜",
+  "leaderboard.best": "最低分",
   "leaderboard.emptyOthers": "排行榜中没有其他玩家",
   "leaderboard.empty": "没有符合筛选条件的结果",
   "profile.cards": "{name} 的头像：{cards}",
@@ -74,5 +74,6 @@
   "leaderboard.sortBy": "按{column}{direction}排序",
   "leaderboard.ascending": "升序",
   "leaderboard.descending": "降序",
-  "leaderboard.cancel": "取消"
+  "leaderboard.cancel": "取消",
+  "leaderboard.bestStreak": "最佳连胜"
 }

@@ -23,11 +23,13 @@ test('ogni intero del punteggio corrisponde a una carta', () => {
 })
 
 test('il podio conserva le carte speciali e le altre posizioni sommano al proprio numero', () => {
-  assert.deepEqual([1, 2, 3].map((position) => cardsForPosition(position).reduce((sum, card) => sum + cardPoints(card), 0)), [-2, -1, 0])
+  assert.deepEqual([1, 2, 3].map((position) => cardsForPosition(position).reduce((sum, card) => sum + cardPoints(card), 0)), [-3, -2, -1])
   for (let position = 4; position <= 29; position += 1) {
     assert.equal(cardsForPosition(position).reduce((sum, card) => sum + cardPoints(card), 0), position)
   }
   assert.deepEqual(cardsForPosition(10).map(cardAssetName), ['spade_10'])
   assert.deepEqual(cardsForPosition(21).map(cardAssetName), ['spade_queen', 'club_jack', 'spade_1'])
-  assert.deepEqual(cardsForPosition(1).map(cardAssetName), ['joker_custom', 'joker_custom'])
+  assert.deepEqual(cardsForPosition(1).map(cardAssetName), ['joker_custom', 'joker_custom', 'joker_custom'])
+  assert.deepEqual(cardsForPosition(2).map(cardAssetName), ['joker_custom', 'joker_custom'])
+  assert.deepEqual(cardsForPosition(3).map(cardAssetName), ['joker_custom'])
 })

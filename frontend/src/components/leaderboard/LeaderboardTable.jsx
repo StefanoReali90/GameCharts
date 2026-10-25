@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, ArrowUpDown, Search } from 'lucide-react'
 import NeonBadge from '../ui/NeonBadge.jsx'
+import ScoreCards from '../ui/ScoreCards.jsx'
 import Tooltip from '../ui/Tooltip.jsx'
 import NameFilterPopover from './NameFilterPopover.jsx'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
@@ -10,15 +11,16 @@ const columns = [
   { key: 'position', label: 'leaderboard.position' },
   { key: 'name', label: 'leaderboard.player' },
   { key: 'wins', label: 'leaderboard.winsColumn' },
+  { key: 'bestWinStreak', label: 'leaderboard.bestStreak' },
   { key: 'winStreak', label: 'leaderboard.streakColumn' },
   { key: 'bestScore', label: 'leaderboard.best' },
 ]
 
-export default function LeaderboardTable({ players, expanded, motion, exitedRanks, onMedalRowExit, onMedalRowsGone, sort, onSort, nameQuery, onNameSearch, hasPodium }) {
+export default function LeaderboardTable({ players, expanded, motion, sort, onSort, nameQuery, onNameSearch, hasPodium }) {
   const { t, locale } = useI18n()
   const [filterOpen, setFilterOpen] = useState(false)
   const filterButtonRef = useRef(null)
-  const hasVisiblePlayers = players.some((player) => expanded || motion === 'closing' || player.position > 3)
+  const hasVisiblePlayers = players.some((player) => expanded || player.position > 3)
 
   const closeFilter = useCallback((restoreFocus = false) => {
     setFilterOpen(false)
@@ -37,8 +39,8 @@ export default function LeaderboardTable({ players, expanded, motion, exitedRank
       id="leaderboard-table"
       className="neon-table-wrap min-h-0 flex-1 overflow-auto rounded-xl border border-cyber-cyan/20 bg-transparent"
     >
-      <table className="leaderboard-table w-full min-w-[640px] border-collapse text-center text-sm" data-expanded={expanded} data-motion={motion}>
-        <thead className="sticky top-0 z-10 bg-cyber-surface/90 text-[10px] uppercase tracking-[0.15em] text-cyber-muted backdrop-blur-xl">
+      <table className="leaderboard-table w-full min-w-[880px] border-collapse text-center text-sm" data-expanded={expanded} data-motion={motion}>
+        <thead className="sticky top-0 z-10 bg-cyber-surface/90 text-[10px] capitalize tracking-[0.15em] text-cyber-muted backdrop-blur-xl">
           <tr>
             {columns.map((column) => {
               const active = sort.key === column.key
@@ -75,23 +77,14 @@ export default function LeaderboardTable({ players, expanded, motion, exitedRank
             <tr
               key={player.id}
               data-rank={player.position <= 3 ? player.position : undefined}
-              data-exited={exitedRanks.includes(player.position) || undefined}
-              aria-hidden={!expanded && motion !== 'closing' && player.position <= 3}
+              aria-hidden={!expanded && player.position <= 3}
               className="leaderboard-data-row transition-colors hover:bg-cyber-cyan/[0.045]"
+              onAnimationStart={(event) => {
+                if (event.target === event.currentTarget && event.animationName === 'leaderboard-medal-strip' && motion === 'opening' && player.position <= 3) playMedalWhoosh(player.position)
+              }}
             >
               <td>
-                <div
-                  className="leaderboard-cell px-4 font-mono text-xs text-cyber-muted"
-                  onAnimationStart={(event) => {
-                    if (event.target === event.currentTarget && event.animationName === 'leaderboard-medal-enter' && motion === 'opening' && player.position <= 3) playMedalWhoosh(player.position)
-                  }}
-                  onAnimationEnd={(event) => {
-                    if (event.target === event.currentTarget && event.animationName === 'leaderboard-medal-leave' && motion === 'closing' && player.position <= 3) onMedalRowExit(player.position)
-                  }}
-                  onTransitionEnd={(event) => {
-                    if (event.target === event.currentTarget && event.propertyName === 'height' && motion === 'closing' && player.position === 1 && exitedRanks.includes(1)) onMedalRowsGone()
-                  }}
-                >{String(player.position).padStart(2, '0')}</div>
+                <div className="leaderboard-cell px-4 font-mono text-xs text-cyber-muted">{String(player.position).padStart(2, '0')}</div>
               </td>
               <td>
                 <div className="leaderboard-cell leaderboard-player-cell px-4 font-medium text-cyber-text">
@@ -101,13 +94,14 @@ export default function LeaderboardTable({ players, expanded, motion, exitedRank
               <td>
                 <div className="leaderboard-cell px-4"><NeonBadge>{player.wins.toLocaleString(locale)}</NeonBadge></div>
               </td>
+              <td><div className="leaderboard-cell px-4 tabular-nums text-cyber-muted">{player.bestWinStreak}</div></td>
               <td><div className="leaderboard-cell px-4 tabular-nums text-cyber-muted">{player.winStreak}</div></td>
-              <td><div className="leaderboard-cell leaderboard-record px-4 tabular-nums">{player.bestScore}</div></td>
+              <td><div className="leaderboard-cell leaderboard-record px-4"><ScoreCards scores={player.bestScore} wrap={false} /></div></td>
             </tr>
           ))}
           {!hasVisiblePlayers && (
             <tr>
-              <td className="leaderboard-empty px-4 py-10 text-center text-sm text-cyber-muted" colSpan="5">
+              <td className="leaderboard-empty px-4 py-10 text-center text-sm text-cyber-muted" colSpan="6">
                 {t(hasPodium ? 'leaderboard.emptyOthers' : 'leaderboard.empty')}
               </td>
             </tr>

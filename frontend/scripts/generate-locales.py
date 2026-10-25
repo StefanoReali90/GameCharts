@@ -27,7 +27,7 @@ footers = {
 }
 
 extra_keys = list(english)[70:]
-extra_keys = [key for key in extra_keys if key != 'leaderboard.cancel']
+extra_keys = [key for key in extra_keys if key not in ('leaderboard.cancel', 'leaderboard.bestStreak')]
 extras = {
     'es': 'Buscar jugador por nombre|Buscar|Ordenar {column} {direction}|ascendente|descendente',
     'fr': 'Rechercher un joueur par nom|Rechercher|Trier {column} par ordre {direction}|croissant|décroissant',
@@ -214,6 +214,50 @@ packs = {
     },
 }
 
+score_labels = {
+    'es': ('Racha de victorias', 'Puntuación más baja', 'inglés', 'italiano'),
+    'fr': ('Série de victoires', 'Score le plus bas', 'anglais', 'italien'),
+    'de': ('Siegesserie', 'Niedrigste Punktzahl', 'Englisch', 'Italienisch'),
+    'pt': ('Sequência de vitórias', 'Menor pontuação', 'inglês', 'italiano'),
+    'zh': ('连胜', '最低分', '英语', '意大利语'),
+    'hi': ('लगातार जीत', 'न्यूनतम स्कोर', 'अंग्रेज़ी', 'इतालवी'),
+    'ar': ('سلسلة الانتصارات', 'أقل نتيجة', 'الإنجليزية', 'الإيطالية'),
+    'bn': ('টানা জয়', 'সর্বনিম্ন স্কোর', 'ইংরেজি', 'ইতালীয়'),
+    'ru': ('Серия побед', 'Наименьший счёт', 'английский', 'итальянский'),
+    'id': ('Rentetan kemenangan', 'Skor terendah', 'bahasa Inggris', 'bahasa Italia'),
+    'ur': ('مسلسل فتوحات', 'کم ترین اسکور', 'انگریزی', 'اطالوی'),
+    'ja': ('連勝', '最低スコア', '英語', 'イタリア語'),
+    'mr': ('सलग विजय', 'सर्वात कमी गुण', 'इंग्रजी', 'इटालियन'),
+    'vi': ('Chuỗi chiến thắng', 'Điểm thấp nhất', 'tiếng Anh', 'tiếng Ý'),
+    'te': ('వరుస విజయాలు', 'అత్యల్ప స్కోరు', 'ఆంగ్లం', 'ఇటాలియన్'),
+    'ha': ('Jerin nasarori', 'Maki mafi ƙanƙanta', 'Turanci', 'Italiyanci'),
+    'tr': ('Galibiyet serisi', 'En düşük puan', 'İngilizce', 'İtalyanca'),
+    'ko': ('연승', '최저 점수', '영어', '이탈리아어'),
+    'ro': ('Serie de victorii', 'Cel mai mic scor', 'engleză', 'italiană'),
+}
+
+streak_columns = {
+    'es': ('Racha actual de victorias', 'Mejor racha de victorias'),
+    'fr': ('Série de victoires actuelle', 'Meilleure série de victoires'),
+    'de': ('Aktuelle Siegesserie', 'Beste Siegesserie'),
+    'pt': ('Sequência atual de vitórias', 'Melhor sequência de vitórias'),
+    'zh': ('当前连胜', '最佳连胜'),
+    'hi': ('वर्तमान जीत की लड़ी', 'सर्वश्रेष्ठ जीत की लड़ी'),
+    'ar': ('سلسلة الانتصارات الحالية', 'أفضل سلسلة انتصارات'),
+    'bn': ('বর্তমান জয়ের ধারা', 'সেরা জয়ের ধারা'),
+    'ru': ('Текущая серия побед', 'Лучшая серия побед'),
+    'id': ('Rentetan kemenangan saat ini', 'Rentetan kemenangan terbaik'),
+    'ur': ('موجودہ مسلسل فتوحات', 'بہترین مسلسل فتوحات'),
+    'ja': ('現在の連勝', '最高連勝'),
+    'mr': ('सध्याची विजयमालिका', 'सर्वोत्तम विजयमालिका'),
+    'vi': ('Chuỗi thắng hiện tại', 'Chuỗi thắng tốt nhất'),
+    'te': ('ప్రస్తుత వరుస విజయాలు', 'ఉత్తమ వరుస విజయాలు'),
+    'ha': ('Jerin nasarori na yanzu', 'Mafi kyawun jerin nasarori'),
+    'tr': ('Güncel galibiyet serisi', 'En iyi galibiyet serisi'),
+    'ko': ('현재 연승', '최고 연승'),
+    'ro': ('Serie actuală de victorii', 'Cea mai bună serie de victorii'),
+}
+
 for code, sections in packs.items():
     translated = {}
     for section, keys in groups.items():
@@ -230,4 +274,9 @@ for code, sections in packs.items():
         raise ValueError(f'{code}/extras: {len(extra_values)} values, expected {len(extra_keys)}')
     translated.update(zip(extra_keys, extra_values))
     translated['leaderboard.cancel'] = cancels[code]
+    streak, lowest, old_language, default_language = score_labels[code]
+    translated['leaderboard.streak'] = f'{streak} {{count}} · {lowest} {{score}}'
+    translated['leaderboard.streakColumn'], translated['leaderboard.bestStreak'] = streak_columns[code]
+    translated['leaderboard.best'] = lowest
+    translated['settings.restoreHint'] = translated['settings.restoreHint'].replace(old_language, default_language)
     (root / f'{code}.json').write_text(json.dumps(translated, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

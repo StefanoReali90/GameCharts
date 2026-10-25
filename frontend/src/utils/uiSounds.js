@@ -139,24 +139,37 @@ export function playButtonClick() {
   })
 }
 
-export function playCrystalTap(rank) {
+export function playCrystalTap() {
   if (effectsVolume === 0) return
   withAudio((context) => {
     const start = context.currentTime
-    const root = [1046.5, 987.77, 783.99][rank - 1] ?? 1046.5
-    for (const [partial, level, duration] of [[1, 1, 0.58], [2.41, 0.24, 0.37], [4.07, 0.08, 0.22]]) {
+    const root = 1046.5
+    for (const [partial, level, duration] of [[1, 1, 1.3], [2.41, 0.24, 0.95], [4.07, 0.08, 0.62]]) {
       const oscillator = context.createOscillator()
       const gain = context.createGain()
+      const vibration = context.createOscillator()
+      const vibrationDepth = context.createGain()
       oscillator.type = 'sine'
       oscillator.frequency.setValueAtTime(root * partial * 1.012, start)
       oscillator.frequency.exponentialRampToValueAtTime(root * partial, start + 0.08)
+      vibration.type = 'sine'
+      vibration.frequency.value = 6.5
+      vibrationDepth.gain.value = 3
+      vibration.connect(vibrationDepth).connect(oscillator.detune)
       gain.gain.setValueAtTime(0.0001, start)
       gain.gain.exponentialRampToValueAtTime(0.065 * level * effectsVolume, start + 0.009)
       gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
       oscillator.connect(gain).connect(context.destination)
       oscillator.start(start)
+      vibration.start(start)
       oscillator.stop(start + duration + 0.01)
-      oscillator.onended = () => { oscillator.disconnect(); gain.disconnect() }
+      vibration.stop(start + duration + 0.01)
+      oscillator.onended = () => {
+        oscillator.disconnect()
+        vibration.disconnect()
+        vibrationDepth.disconnect()
+        gain.disconnect()
+      }
     }
   })
 }

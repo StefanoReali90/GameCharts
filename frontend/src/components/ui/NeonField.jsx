@@ -7,7 +7,7 @@ const controlClasses = 'h-11 w-full rounded-xl border border-cyber-purple/40 bg-
 export function NeonField({ label, htmlFor, className, children }) {
   return (
     <label className={cn('grid min-w-0 gap-2', className)} htmlFor={htmlFor}>
-      <span className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100">{label}</span>
+      <span className="text-xs font-semibold capitalize tracking-[0.16em] text-cyan-100">{label}</span>
       {children}
     </label>
   )

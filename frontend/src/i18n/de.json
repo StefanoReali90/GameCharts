@@ -15,7 +15,7 @@
   "settings.languageHelp": "Wähle die Sprache der Benutzeroberfläche.",
   "settings.save": "Speichern",
   "settings.restore": "Standardeinstellungen wiederherstellen",
-  "settings.restoreHint": "Setzt Audio und Sprache zurück: Effekte 67 %, Musik 4 %, Englisch.",
+  "settings.restoreHint": "Setzt Audio und Sprache zurück: Effekte 67 %, Musik 4 %, Italienisch.",
   "settings.alreadyDefault": "Die Einstellungen entsprechen bereits den Standardwerten.",
   "dialog.close": "Schließen",
   "leaderboard.title": "Rangliste",
@@ -28,13 +28,13 @@
   "leaderboard.wins": "{count} Siege",
   "leaderboard.winOne": "Sieg",
   "leaderboard.winMany": "Siege",
-  "leaderboard.streak": "Serie {count} · Rekord {score}",
+  "leaderboard.streak": "Siegesserie {count} · Niedrigste Punktzahl {score}",
   "leaderboard.waiting": "Warten",
   "leaderboard.position": "Pos.",
   "leaderboard.player": "Spieler",
   "leaderboard.winsColumn": "Siege",
-  "leaderboard.streakColumn": "Siegesserie",
-  "leaderboard.best": "Bestes Ergebnis",
+  "leaderboard.streakColumn": "Aktuelle Siegesserie",
+  "leaderboard.best": "Niedrigste Punktzahl",
   "leaderboard.emptyOthers": "Keine weiteren Spieler in der Rangliste",
   "leaderboard.empty": "Keine Ergebnisse für diese Filter",
   "profile.cards": "Profilbild von {name}: {cards}",
@@ -74,5 +74,6 @@
   "leaderboard.sortBy": "{column} {direction} sortieren",
   "leaderboard.ascending": "aufsteigend",
   "leaderboard.descending": "absteigend",
-  "leaderboard.cancel": "Abbrechen"
+  "leaderboard.cancel": "Abbrechen",
+  "leaderboard.bestStreak": "Beste Siegesserie"
 }

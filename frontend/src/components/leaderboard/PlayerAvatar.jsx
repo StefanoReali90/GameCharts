@@ -17,9 +17,10 @@ export default function PlayerAvatar({ player, size = 'small' }) {
         'leaderboard-avatar relative inline-flex shrink-0 items-center justify-center',
         sizeClasses,
         cards.length
-          ? 'playing-card-avatar overflow-visible rounded-lg border border-cyber-cyan/35 bg-cyber-panel/70 p-[1px] shadow-[0_4px_12px_rgb(0_0_0/0.35)]'
+          ? 'playing-card-avatar overflow-visible'
           : 'rounded-xl border border-cyber-cyan/30 bg-cyber-cyan/10 text-cyan-100 shadow-neon-cyan',
-        cards.length > 1 && 'playing-card-avatar--pair',
+        cards.length === 2 && 'playing-card-avatar--pair',
+        cards.length === 3 && 'playing-card-avatar--triple',
       )}
       role="img"
       aria-label={t(cards.length ? 'profile.cards' : 'profile.empty', { name: player.fullName ?? `${player.name} ${player.surname}`, cards: cards.map((card) => cardLabel(card, t)).join(', ') })}

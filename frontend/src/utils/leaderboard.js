@@ -1,7 +1,9 @@
+import { scoreTotal } from './scores.js'
+
 export function buildLeaderboard(data) {
   return [...data.players]
     .map((player) => ({ ...player, fullName: `${player.name} ${player.surname}` }))
-    .sort((first, second) => second.wins - first.wins || second.bestScore - first.bestScore || first.id - second.id)
+    .sort((first, second) => second.wins - first.wins || scoreTotal(first.bestScore) - scoreTotal(second.bestScore) || first.id - second.id)
     .map((player, index) => ({ ...player, position: index + 1 }))
 }
 
@@ -9,8 +11,9 @@ const sortableValues = {
   position: (player) => player.position,
   name: (player) => player.fullName,
   wins: (player) => player.wins,
+  bestWinStreak: (player) => player.bestWinStreak,
   winStreak: (player) => player.winStreak,
-  bestScore: (player) => player.bestScore,
+  bestScore: (player) => scoreTotal(player.bestScore),
 }
 
 const searchable = (value) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLocaleLowerCase()

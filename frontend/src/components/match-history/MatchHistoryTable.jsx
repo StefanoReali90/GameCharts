@@ -17,7 +17,7 @@ export default function MatchHistoryTable({ matches }) {
       onPointerLeave={floating.onPointerLeave}
     >
       <table className="history-table w-full min-w-[480px] border-collapse text-center text-sm">
-        <thead className="sticky top-0 z-10 bg-cyber-surface/90 text-[10px] uppercase tracking-[0.15em] text-cyber-muted backdrop-blur-xl">
+        <thead className="sticky top-0 z-10 bg-cyber-surface/90 text-[10px] capitalize tracking-[0.15em] text-cyber-muted backdrop-blur-xl">
           <tr>
             <th className="px-4 py-3 text-center font-medium" scope="col">{t('history.date')}</th>
             <th className="px-4 py-3 text-center font-medium" scope="col">{t('history.winner')}</th>
@@ -33,7 +33,7 @@ export default function MatchHistoryTable({ matches }) {
               <td className="whitespace-nowrap px-4 py-3.5 text-xs tabular-nums text-cyber-muted">
                 <time dateTime={match.date}>{new Date(match.date).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}</time>
               </td>
-              <td className="px-4 py-3.5 text-green-200">{match.winnerName}</td>
+              <td className="px-4 py-3.5 text-green-200">{match.winnerNames.join(', ')}</td>
               <td className="px-4 py-3.5 text-xs tabular-nums text-cyber-muted"><ScoreCards scores={match.winnerScores} /></td>
             </tr>
           )) : (

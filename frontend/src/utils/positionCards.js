@@ -37,10 +37,10 @@ export function cardForScore(score) {
 export function cardsForPosition(position) {
   if (!Number.isSafeInteger(position) || position < 1) return []
 
-  // Il podio conserva le mani speciali: -2, -1 e 0 punti.
-  if (position === 1) return [joker(), joker()]
-  if (position === 2) return [joker()]
-  if (position === 3) return [faceCard('king', 'heart')]
+  // Sul podio le mani speciali hanno rispettivamente tre, due e un jolly.
+  if (position === 1) return [joker(), joker(), joker()]
+  if (position === 2) return [joker(), joker()]
+  if (position === 3) return [joker()]
   if (position <= 10) return [numberCard(position)]
 
   // Una figura vale dieci; ogni altra carta aggiunge il proprio valore.

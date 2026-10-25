@@ -15,7 +15,7 @@
   "settings.languageHelp": "इंटरफ़ेस की भाषा चुनें।",
   "settings.save": "सहेजें",
   "settings.restore": "डिफ़ॉल्ट सेटिंग्स बहाल करें",
-  "settings.restoreHint": "ऑडियो और भाषा को मूल मानों पर लाएँ: प्रभाव 67%, संगीत 4%, अंग्रेज़ी।",
+  "settings.restoreHint": "ऑडियो और भाषा को मूल मानों पर लाएँ: प्रभाव 67%, संगीत 4%, इतालवी।",
   "settings.alreadyDefault": "सेटिंग्स पहले से ही डिफ़ॉल्ट मानों पर हैं।",
   "dialog.close": "बंद करें",
   "leaderboard.title": "रैंकिंग",
@@ -28,13 +28,13 @@
   "leaderboard.wins": "{count} जीत",
   "leaderboard.winOne": "जीत",
   "leaderboard.winMany": "जीत",
-  "leaderboard.streak": "लगातार जीत {count} · रिकॉर्ड {score}",
+  "leaderboard.streak": "लगातार जीत {count} · न्यूनतम स्कोर {score}",
   "leaderboard.waiting": "प्रतीक्षा में",
   "leaderboard.position": "स्थान",
   "leaderboard.player": "खिलाड़ी",
   "leaderboard.winsColumn": "जीत",
-  "leaderboard.streakColumn": "लगातार जीत",
-  "leaderboard.best": "सर्वश्रेष्ठ कुल",
+  "leaderboard.streakColumn": "वर्तमान जीत की लड़ी",
+  "leaderboard.best": "न्यूनतम स्कोर",
   "leaderboard.emptyOthers": "रैंकिंग में कोई अन्य खिलाड़ी नहीं",
   "leaderboard.empty": "इन फ़िल्टरों के लिए कोई परिणाम नहीं",
   "profile.cards": "{name} की प्रोफ़ाइल तस्वीर: {cards}",
@@ -74,5 +74,6 @@
   "leaderboard.sortBy": "{column} को {direction} क्रम में लगाएँ",
   "leaderboard.ascending": "आरोही",
   "leaderboard.descending": "अवरोही",
-  "leaderboard.cancel": "रद्द करें"
+  "leaderboard.cancel": "रद्द करें",
+  "leaderboard.bestStreak": "सर्वश्रेष्ठ जीत की लड़ी"
 }

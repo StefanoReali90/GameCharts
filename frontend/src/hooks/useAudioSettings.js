@@ -4,7 +4,7 @@ import { setBackgroundMusicElement, setBackgroundMusicVolume, setEffectsVolume }
 const storageKey = 'gamechart-audio-settings-v2'
 const defaults = { effectsVolume: 0.67, musicVolume: 0.04 }
 const volumeOrDefault = (value, fallback) => typeof value === 'number' && Number.isFinite(value)
-  ? Math.min(1, Math.max(0, value))
+  ? Math.round(Math.min(1, Math.max(0, value)) * 100) / 100
   : fallback
 
 function loadSettings() {
