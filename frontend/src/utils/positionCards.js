@@ -34,6 +34,18 @@ export function cardForScore(score) {
   return { kind: 'custom-value', value: score }
 }
 
+export function cardsForScore(score) {
+  if (!Number.isSafeInteger(score)) return []
+  if (score < 0) return Array.from({ length: Math.min(-score, 4) }, joker)
+  if (score <= 10 || score > 30) return [cardForScore(score)]
+  const tens = Math.floor(score / 10)
+  const remainder = score % 10
+  return [
+    ...Array.from({ length: tens }, () => numberCard(10)),
+    ...(remainder ? [numberCard(remainder)] : []),
+  ]
+}
+
 export function cardsForPosition(position) {
   if (!Number.isSafeInteger(position) || position < 1) return []
 

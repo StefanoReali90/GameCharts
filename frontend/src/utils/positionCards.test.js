@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cardForScore, cardPoints, cardsForPosition } from './positionCards.js'
+import { cardForScore, cardPoints, cardsForPosition, cardsForScore } from './positionCards.js'
 import { cardAssetName } from './playingCards.js'
 
 test('i valori delle carte seguono le regole del gioco', () => {
@@ -20,6 +20,13 @@ test('ogni intero del punteggio corrisponde a una carta', () => {
   assert.deepEqual([-1, 0, 1, 10, 48].map((score) => cardAssetName(cardForScore(score))), [
     'joker_custom', 'heart_king', 'spade_1', 'spade_10', 'card-base',
   ])
+})
+
+test('le carte del miglior punteggio sommano il valore mostrato, anche sotto zero', () => {
+  for (const score of [-4, -2, -1, 0, 1, 10, 11, 27]) {
+    assert.equal(cardsForScore(score).reduce((sum, card) => sum + cardPoints(card), 0), score)
+  }
+  assert.deepEqual(cardsForScore(-4).map(cardAssetName), Array(4).fill('joker_custom'))
 })
 
 test('il podio conserva le carte speciali e le altre posizioni sommano al proprio numero', () => {

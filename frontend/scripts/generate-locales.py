@@ -27,7 +27,7 @@ footers = {
 }
 
 extra_keys = list(english)[70:]
-extra_keys = [key for key in extra_keys if key not in ('leaderboard.cancel', 'leaderboard.bestStreak')]
+extra_keys = [key for key in extra_keys if key not in ('leaderboard.cancel', 'leaderboard.bestStreak', 'leaderboard.clearSearch', 'leaderboard.risen', 'leaderboard.fallen', 'history.searchWinners')]
 extras = {
     'es': 'Buscar jugador por nombre|Buscar|Ordenar {column} {direction}|ascendente|descendente',
     'fr': 'Rechercher un joueur par nom|Rechercher|Trier {column} par ordre {direction}|croissant|décroissant',
@@ -214,6 +214,72 @@ packs = {
     },
 }
 
+latest_matches_labels = {
+    'ar': ('أحدث المباريات', 'ابحث عن الفائزين'),
+    'bn': ('সর্বশেষ ম্যাচ', 'বিজয়ী খুঁজুন'),
+    'de': ('Letzte Spiele', 'Gewinner suchen'),
+    'es': ('Últimas partidas', 'Buscar ganadores'),
+    'fr': ('Dernières parties', 'Rechercher des gagnants'),
+    'ha': ('Wasannin baya-bayan nan', 'Nemo masu nasara'),
+    'hi': ('हाल के मैच', 'विजेताओं को खोजें'),
+    'id': ('Pertandingan terbaru', 'Cari pemenang'),
+    'ja': ('最近の試合', '勝者を検索'),
+    'ko': ('최근 경기', '우승자 검색'),
+    'mr': ('अलीकडील सामने', 'विजेते शोधा'),
+    'pt': ('Últimas partidas', 'Buscar vencedores'),
+    'ro': ('Ultimele meciuri', 'Caută câștigători'),
+    'ru': ('Последние матчи', 'Поиск победителей'),
+    'te': ('తాజా మ్యాచ్‌లు', 'విజేతలను వెతకండి'),
+    'tr': ('Son maçlar', 'Kazananları ara'),
+    'ur': ('تازہ ترین میچ', 'فاتحین تلاش کریں'),
+    'vi': ('Trận đấu gần đây', 'Tìm người thắng'),
+    'zh': ('最近比赛', '搜索获胜者'),
+}
+
+position_change_labels = {
+    'ar': ('تقدم {count} مراكز', 'تراجع {count} مراكز'),
+    'bn': ('{count} স্থান উপরে', '{count} স্থান নিচে'),
+    'de': ('Um {count} Plätze gestiegen', 'Um {count} Plätze gefallen'),
+    'es': ('Subió {count} puestos', 'Bajó {count} puestos'),
+    'fr': ('Monté de {count} places', 'Descendu de {count} places'),
+    'ha': ('Ya hau matsayi {count}', 'Ya sauka matsayi {count}'),
+    'hi': ('{count} स्थान ऊपर', '{count} स्थान नीचे'),
+    'id': ('Naik {count} posisi', 'Turun {count} posisi'),
+    'ja': ('{count}位上昇', '{count}位下降'),
+    'ko': ('{count}계단 상승', '{count}계단 하락'),
+    'mr': ('{count} स्थानांनी वर', '{count} स्थानांनी खाली'),
+    'pt': ('Subiu {count} posições', 'Desceu {count} posições'),
+    'ro': ('A urcat {count} poziții', 'A coborât {count} poziții'),
+    'ru': ('Поднялся на {count} позиций', 'Опустился на {count} позиций'),
+    'te': ('{count} స్థానాలు పైకి', '{count} స్థానాలు కిందికి'),
+    'tr': ('{count} sıra yükseldi', '{count} sıra düştü'),
+    'ur': ('{count} درجے اوپر', '{count} درجے نیچے'),
+    'vi': ('Tăng {count} bậc', 'Giảm {count} bậc'),
+    'zh': ('上升 {count} 位', '下降 {count} 位'),
+}
+
+clear_search_labels = {
+    'ar': 'مسح البحث',
+    'bn': 'অনুসন্ধান মুছুন',
+    'de': 'Suche löschen',
+    'es': 'Borrar búsqueda',
+    'fr': 'Effacer la recherche',
+    'ha': 'Share bincike',
+    'hi': 'खोज मिटाएँ',
+    'id': 'Hapus pencarian',
+    'ja': '検索をクリア',
+    'ko': '검색 지우기',
+    'mr': 'शोध साफ करा',
+    'pt': 'Limpar pesquisa',
+    'ro': 'Șterge căutarea',
+    'ru': 'Очистить поиск',
+    'te': 'శోధనను క్లియర్ చేయండి',
+    'tr': 'Aramayı temizle',
+    'ur': 'تلاش صاف کریں',
+    'vi': 'Xóa tìm kiếm',
+    'zh': '清除搜索',
+}
+
 score_labels = {
     'es': ('Racha de victorias', 'Puntuación más baja', 'inglés', 'italiano'),
     'fr': ('Série de victoires', 'Score le plus bas', 'anglais', 'italien'),
@@ -258,6 +324,14 @@ streak_columns = {
     'ro': ('Serie actuală de victorii', 'Cea mai bună serie de victorii'),
 }
 
+score_column_labels = {
+    'es': 'Puntuación', 'fr': 'Score', 'de': 'Punktzahl', 'pt': 'Pontuação',
+    'zh': '分数', 'hi': 'अंक', 'ar': 'النتيجة', 'bn': 'স্কোর',
+    'ru': 'Счёт', 'id': 'Skor', 'ur': 'اسکور', 'ja': 'スコア',
+    'mr': 'गुण', 'vi': 'Điểm', 'te': 'స్కోరు', 'ha': 'Maki',
+    'tr': 'Puan', 'ko': '점수', 'ro': 'Scor',
+}
+
 for code, sections in packs.items():
     translated = {}
     for section, keys in groups.items():
@@ -274,9 +348,14 @@ for code, sections in packs.items():
         raise ValueError(f'{code}/extras: {len(extra_values)} values, expected {len(extra_keys)}')
     translated.update(zip(extra_keys, extra_values))
     translated['leaderboard.cancel'] = cancels[code]
+    translated['leaderboard.clearSearch'] = clear_search_labels[code]
+    translated['leaderboard.risen'], translated['leaderboard.fallen'] = position_change_labels[code]
+    translated['nav.history'], translated['history.searchWinners'] = latest_matches_labels[code]
+    translated['history.title'] = translated['nav.history']
     streak, lowest, old_language, default_language = score_labels[code]
     translated['leaderboard.streak'] = f'{streak} {{count}} · {lowest} {{score}}'
     translated['leaderboard.streakColumn'], translated['leaderboard.bestStreak'] = streak_columns[code]
     translated['leaderboard.best'] = lowest
+    translated['history.scores'] = score_column_labels[code]
     translated['settings.restoreHint'] = translated['settings.restoreHint'].replace(old_language, default_language)
     (root / f'{code}.json').write_text(json.dumps(translated, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

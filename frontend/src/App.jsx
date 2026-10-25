@@ -5,16 +5,28 @@ import OpeningVideo from './components/layout/OpeningVideo.jsx'
 import SettingsDialog from './components/layout/SettingsDialog.jsx'
 import LeaderboardPage from './pages/leaderboard/LeaderboardPage.jsx'
 import MatchHistoryPage from './pages/match-history/MatchHistoryPage.jsx'
-import { loadMatchData } from './data/matchStore.js'
+import { loadMatchData, saveMatchData } from './data/matchStore.js'
+import { readRankingSnapshot, saveRankingSnapshot } from './data/rankingSnapshot.js'
+import { buildLeaderboard } from './utils/leaderboard.js'
+import { readSimulationTime, saveSimulationTime, simulateMissedMatches, simulateNextMatch, startMockSimulation } from './data/mockSimulation.js'
 import { playButtonClick, playPageChange, unlockEffectsAudio } from './utils/uiSounds.js'
 import { useAudioSettings } from './hooks/useAudioSettings.js'
 import { useI18n } from './i18n/I18nProvider.jsx'
 
 export default function App() {
-  const [sidebarMode, setSidebarMode] = useState('closed')
+  const [sidebarPinned, setSidebarPinned] = useState(false)
+  const [sidebarHovered, setSidebarHovered] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('leaderboard')
-  const [matchData] = useState(loadMatchData)
+  const [matchData, setMatchData] = useState(loadMatchData)
+  const matchDataRef = useRef(matchData)
+  matchDataRef.current = matchData
+  const [previousPositions, setPreviousPositions] = useState(() => {
+    const saved = readRankingSnapshot()
+    return Object.keys(saved).length
+      ? saved
+      : Object.fromEntries(buildLeaderboard(matchData).map(({ id, position }) => [id, position]))
+  })
   const [showOpeningVideo, setShowOpeningVideo] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -22,7 +34,7 @@ export default function App() {
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
   const audio = useAudioSettings(openingVideoExited)
-  const { saveLanguage } = useI18n()
+  const { saveLanguage, t } = useI18n()
   const [podiumEntranceReady, setPodiumEntranceReady] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -34,7 +46,39 @@ export default function App() {
   )
   const backgroundVideoRef = useRef(null)
   const [backgroundVideoPlaying, setBackgroundVideoPlaying] = useState(false)
-  const sidebarOpen = sidebarMode === 'hover' || sidebarMode === 'pinned'
+  const hoverCloseTimer = useRef(null)
+  const sidebarOpen = sidebarPinned || sidebarHovered
+
+  useEffect(() => () => window.clearTimeout(hoverCloseTimer.current), [])
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return undefined
+    const now = Date.now()
+    const lastTime = readSimulationTime()
+    if (lastTime !== null) setMatchData((current) => simulateMissedMatches(current, lastTime, now))
+    saveSimulationTime(now)
+    return startMockSimulation(() => {
+      const tickTime = Date.now()
+      setMatchData((current) => simulateNextMatch(current))
+      saveSimulationTime(tickTime)
+    })
+  }, [])
+
+  useEffect(() => { saveMatchData(matchData) }, [matchData])
+
+  useEffect(() => {
+    const rememberLastSeenRanking = () => saveRankingSnapshot(buildLeaderboard(matchDataRef.current))
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') rememberLastSeenRanking()
+      else setPreviousPositions(readRankingSnapshot())
+    }
+    window.addEventListener('pagehide', rememberLastSeenRanking)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => {
+      window.removeEventListener('pagehide', rememberLastSeenRanking)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [])
 
   useEffect(() => {
     unlockEffectsAudio()
@@ -92,25 +136,31 @@ export default function App() {
     }
   }, [showBackgroundVideo, openingVideoExited, podiumEntranceFinished])
 
-  const handleSidebarPointerEnter = () => {
-    setSidebarMode((mode) => mode === 'closed' ? 'hover' : mode)
+  const handleSidebarPointerEnter = (event) => {
+    if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return
+    if (window.matchMedia('(max-width: 760px)').matches) return
+    window.clearTimeout(hoverCloseTimer.current)
+    setSidebarHovered(true)
   }
 
   const handleSidebarPointerLeave = () => {
-    setSidebarMode((mode) => mode === 'hover' || mode === 'dismissed' ? 'closed' : mode)
+    window.clearTimeout(hoverCloseTimer.current)
+    hoverCloseTimer.current = window.setTimeout(() => setSidebarHovered(false), 160)
   }
 
   const toggleSidebar = () => {
-    setSidebarMode((mode) => mode === 'hover' || mode === 'pinned' ? 'closed' : 'pinned')
+    window.clearTimeout(hoverCloseTimer.current)
+    setSidebarPinned(!sidebarOpen)
+    setSidebarHovered(false)
   }
 
   const navigateTo = (page) => {
+    window.clearTimeout(hoverCloseTimer.current)
     setCurrentPage(page)
     if (page !== 'leaderboard') setPodiumEntranceFinished(true)
-    setSidebarMode('dismissed')
+    setSidebarPinned(false)
+    setSidebarHovered(false)
   }
-
-  const openSidebar = () => setSidebarMode('pinned')
 
   return (
     <div
@@ -153,15 +203,15 @@ export default function App() {
           sidebarOpen={sidebarOpen}
           currentPage={currentPage}
           onNavigate={navigateTo}
-          onSettingsOpen={() => setSettingsOpen(true)}
-          onSidebarOpen={openSidebar}
+          onSettingsOpen={() => { window.clearTimeout(hoverCloseTimer.current); setSettingsOpen(true); setSidebarPinned(false); setSidebarHovered(false) }}
           onPointerEnter={handleSidebarPointerEnter}
           onPointerLeave={handleSidebarPointerLeave}
         />
+        {sidebarOpen && <button type="button" className="sidebar-backdrop" aria-label={t('nav.close')} onClick={() => { window.clearTimeout(hoverCloseTimer.current); setSidebarPinned(false); setSidebarHovered(false) }} />}
         <span className="layout-inner-curve" aria-hidden="true" />
         <main className="page-container relative min-h-0 min-w-0 overflow-hidden">
           {currentPage === 'leaderboard'
-            ? <LeaderboardPage entranceReady={podiumEntranceReady} entranceFinished={podiumEntranceFinished} onEntranceComplete={() => setPodiumEntranceFinished(true)} data={matchData} />
+            ? <LeaderboardPage entranceReady={podiumEntranceReady} entranceFinished={podiumEntranceFinished} onEntranceComplete={() => setPodiumEntranceFinished(true)} data={matchData} previousPositions={previousPositions} />
             : <MatchHistoryPage data={matchData} />}
         </main>
       </div>

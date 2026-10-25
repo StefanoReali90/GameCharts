@@ -1,30 +1,40 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { buildLeaderboard, selectLeaderboardPlayers } from './leaderboard.js'
+import { buildLeaderboard, findLeaderboardPlayer, selectLeaderboardPlayers } from './leaderboard.js'
 
-const players = [
-  { id: 1, fullName: 'Émilie R.', position: 1, wins: 5, bestWinStreak: 4, winStreak: 1, bestScore: [8, 12] },
-  { id: 2, fullName: 'Alessandra Z.', position: 2, wins: 3, bestWinStreak: 3, winStreak: 3, bestScore: [40] },
-  { id: 3, fullName: 'Dario C.', position: 3, wins: 2, bestWinStreak: 2, winStreak: 0, bestScore: [30] },
-]
+const data = {
+  players: [
+    { id: 1, username: 'Émilie R.' },
+    { id: 2, username: 'Alessandra Z.' },
+    { id: 3, username: 'Dario C.' },
+  ],
+  matches: [
+    { id: 1, date: '2026-10-01T12:00:00.000Z', winnerIds: [1, 2], winningScore: 3 },
+    { id: 2, date: '2026-10-02T12:00:00.000Z', winnerIds: [2], winningScore: -4 },
+    { id: 3, date: '2026-10-03T12:00:00.000Z', winnerIds: [1, 2], winningScore: -2 },
+    { id: 4, date: '2026-10-04T12:00:00.000Z', winnerIds: [3], winningScore: 0 },
+  ],
+}
 
-test('la ricerca trova anche i nomi accentati e mantiene la posizione originale', () => {
-  const result = selectLeaderboardPlayers(players, 'emilie', { key: 'position', direction: 'asc' }, 'it')
-  assert.deepEqual(result.map(({ id, position }) => [id, position]), [[1, 1]])
+test('vittorie e serie derivano dall’ordine cronologico dei match', () => {
+  const ranked = buildLeaderboard({ ...data, matches: [...data.matches].reverse() })
+  assert.deepEqual(ranked.map(({ id, wins, winStreak, bestWinStreak }) => [id, wins, winStreak, bestWinStreak]),
+    [[2, 3, 0, 3], [1, 2, 0, 1], [3, 1, 1, 1]])
+  assert.deepEqual(data.players[0], { id: 1, username: 'Émilie R.' })
 })
 
-test('ordina nomi e colonne numeriche senza modificare la classifica di partenza', () => {
-  assert.deepEqual(selectLeaderboardPlayers(players, '', { key: 'name', direction: 'asc' }, 'it').map((player) => player.id), [2, 3, 1])
-  assert.deepEqual(selectLeaderboardPlayers(players, '', { key: 'winStreak', direction: 'desc' }, 'it').map((player) => player.id), [2, 1, 3])
-  assert.deepEqual(selectLeaderboardPlayers(players, '', { key: 'bestWinStreak', direction: 'desc' }, 'it').map((player) => player.id), [1, 2, 3])
-  assert.deepEqual(selectLeaderboardPlayers(players, '', { key: 'bestScore', direction: 'asc' }, 'it').map((player) => player.id), [1, 3, 2])
-  assert.deepEqual(players.map((player) => player.id), [1, 2, 3])
+test('ricerca e ordinamenti usano username e statistiche calcolate', () => {
+  const ranked = buildLeaderboard(data)
+  assert.equal(findLeaderboardPlayer(ranked, 'emilie')?.id, 1)
+  assert.deepEqual(selectLeaderboardPlayers(ranked, 'emilie', { key: 'position', direction: 'asc' }, 'it').map((player) => player.id), [2, 1, 3])
+  assert.deepEqual(selectLeaderboardPlayers(ranked, '', { key: 'name', direction: 'asc' }, 'it').map((player) => player.id), [2, 3, 1])
+  assert.deepEqual(selectLeaderboardPlayers(ranked, '', { key: 'bestWinStreak', direction: 'desc' }, 'it').map((player) => player.id), [2, 1, 3])
+  assert.deepEqual(selectLeaderboardPlayers(ranked, '', { key: 'bestScore', direction: 'asc' }, 'it').map((player) => player.id), [2, 1, 3])
 })
 
-test('a parità di vittorie precede il punteggio più basso', () => {
-  const ranking = buildLeaderboard({ players: [
-    { id: 1, name: 'Primo', surname: 'A.', wins: 2, bestScore: [8, 12] },
-    { id: 2, name: 'Secondo', surname: 'B.', wins: 2, bestScore: [2, 3] },
-  ] })
-  assert.deepEqual(ranking.map((player) => player.id), [2, 1])
+test('il miglior punteggio dei non vincitori resta vuoto e viene ordinato per ultimo', () => {
+  const ranked = buildLeaderboard({ ...data, players: [...data.players, { id: 4, username: 'Nuovo' }] })
+  assert.deepEqual(ranked.slice(0, 3).map((player) => player.bestScore), [-4, -2, 0])
+  assert.equal(ranked.find((player) => player.id === 4).bestScore, null)
+  assert.equal(selectLeaderboardPlayers(ranked, '', { key: 'bestScore', direction: 'desc' }).at(-1).id, 4)
 })

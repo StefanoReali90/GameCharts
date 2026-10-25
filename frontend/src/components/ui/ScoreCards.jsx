@@ -1,15 +1,14 @@
-import { cardForScore } from '../../utils/positionCards.js'
 import PlayingCardThumbnail from './PlayingCardThumbnail.jsx'
-import { useI18n } from '../../i18n/I18nProvider.jsx'
+import { cardsForScore } from '../../utils/positionCards.js'
 
-export default function ScoreCards({ scores, wrap = true }) {
-  const { t } = useI18n()
-  if (!scores.length) return <span>—</span>
+export default function ScoreCards({ score }) {
+  if (score === null) return <span>—</span>
 
+  const cards = cardsForScore(score)
   return (
-    <span className={`inline-flex items-center justify-center gap-1.5 ${wrap ? 'flex-wrap' : 'flex-nowrap'}`} role="img" aria-label={t('scores.aria', { scores: scores.join(', ') })}>
-      {scores.map((score, index) => (
-        <PlayingCardThumbnail key={`${index}-${score}`} card={cardForScore(score)} className="h-[46px] w-[32px]" />
+    <span className="inline-flex items-center justify-center gap-0.5" role="img" aria-label={String(score)}>
+      {cards.map((card, index) => (
+        <PlayingCardThumbnail key={`${card.kind}-${card.rank ?? ''}-${index}`} card={card} className="h-7 w-5" />
       ))}
     </span>
   )

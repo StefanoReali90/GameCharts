@@ -3,7 +3,7 @@
   "nav.label": "প্রধান নেভিগেশন",
   "nav.pages": "পৃষ্ঠা",
   "nav.leaderboard": "র‌্যাঙ্কিং",
-  "nav.history": "ম্যাচের ইতিহাস",
+  "nav.history": "সর্বশেষ ম্যাচ",
   "nav.settings": "সেটিংস",
   "nav.open": "সাইডবার খুলুন",
   "nav.close": "সাইডবার বন্ধ করুন",
@@ -40,7 +40,7 @@
   "profile.cards": "{name}-এর প্রোফাইল ছবি: {cards}",
   "profile.empty": "{name}-এর প্রোফাইল ছবি",
   "scores.aria": "স্কোর: {scores}",
-  "history.title": "ম্যাচের ইতিহাস",
+  "history.title": "সর্বশেষ ম্যাচ",
   "history.add": "ম্যাচ যোগ করুন",
   "history.help": "কমা দিয়ে স্কোর আলাদা করুন। সংরক্ষণের সময় তারিখ স্বয়ংক্রিয়ভাবে বসবে।",
   "history.winner": "বিজয়ীরা",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "ঊর্ধ্বক্রমে",
   "leaderboard.descending": "নিম্নক্রমে",
   "leaderboard.cancel": "বাতিল",
+  "leaderboard.clearSearch": "অনুসন্ধান মুছুন",
+  "history.searchWinners": "বিজয়ী খুঁজুন",
+  "leaderboard.risen": "{count} স্থান উপরে",
+  "leaderboard.fallen": "{count} স্থান নিচে",
   "leaderboard.bestStreak": "সেরা জয়ের ধারা"
 }

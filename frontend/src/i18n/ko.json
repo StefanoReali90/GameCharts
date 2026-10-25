@@ -3,7 +3,7 @@
   "nav.label": "주 탐색",
   "nav.pages": "페이지",
   "nav.leaderboard": "순위표",
-  "nav.history": "경기 기록",
+  "nav.history": "최근 경기",
   "nav.settings": "설정",
   "nav.open": "사이드바 열기",
   "nav.close": "사이드바 닫기",
@@ -40,7 +40,7 @@
   "profile.cards": "{name}의 프로필 사진: {cards}",
   "profile.empty": "{name}의 프로필 사진",
   "scores.aria": "점수: {scores}",
-  "history.title": "경기 기록",
+  "history.title": "최근 경기",
   "history.add": "경기 추가",
   "history.help": "점수를 쉼표로 구분하세요. 저장할 때 날짜가 자동으로 설정됩니다.",
   "history.winner": "승자",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "오름차순",
   "leaderboard.descending": "내림차순",
   "leaderboard.cancel": "취소",
+  "leaderboard.clearSearch": "검색 지우기",
+  "history.searchWinners": "우승자 검색",
+  "leaderboard.risen": "{count}계단 상승",
+  "leaderboard.fallen": "{count}계단 하락",
   "leaderboard.bestStreak": "최고 연승"
 }

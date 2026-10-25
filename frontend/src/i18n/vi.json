@@ -3,7 +3,7 @@
   "nav.label": "Điều hướng chính",
   "nav.pages": "Trang",
   "nav.leaderboard": "Bảng xếp hạng",
-  "nav.history": "Lịch sử trận đấu",
+  "nav.history": "Trận đấu gần đây",
   "nav.settings": "Cài đặt",
   "nav.open": "Mở thanh bên",
   "nav.close": "Đóng thanh bên",
@@ -40,7 +40,7 @@
   "profile.cards": "Ảnh hồ sơ của {name}: {cards}",
   "profile.empty": "Ảnh hồ sơ của {name}",
   "scores.aria": "Điểm: {scores}",
-  "history.title": "Lịch sử trận đấu",
+  "history.title": "Trận đấu gần đây",
   "history.add": "Thêm trận đấu",
   "history.help": "Phân tách điểm bằng dấu phẩy. Ngày được đặt tự động khi lưu.",
   "history.winner": "Người chiến thắng",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "tăng dần",
   "leaderboard.descending": "giảm dần",
   "leaderboard.cancel": "Hủy",
+  "leaderboard.clearSearch": "Xóa tìm kiếm",
+  "history.searchWinners": "Tìm người thắng",
+  "leaderboard.risen": "Tăng {count} bậc",
+  "leaderboard.fallen": "Giảm {count} bậc",
   "leaderboard.bestStreak": "Chuỗi thắng tốt nhất"
 }

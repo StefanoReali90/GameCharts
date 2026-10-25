@@ -1,57 +1,81 @@
-// Player: id, name, surname, wins, winStreak, bestWinStreak e bestScore (lista di interi).
-// Match: id, date, winnerIds (lista di riferimenti a Player.id) e winnerScores.
-// Una partita con più vincitori resta un solo Match. La data viene assegnata
-// automaticamente: ogni vincitore guadagna una vittoria e un punto di serie;
-// il punteggio più basso migliora se la somma è minore. Le serie degli altri tornano a zero.
-// Le vittorie iniziali sono dati dimostrativi (da 1 a 20), indipendenti dai soli
-// match visibili nello storico. Solo il vincitore delle ultime tre partite ha una
-// serie attiva; quando si aggiunge un match, tutte le altre serie si azzerano.
+// I soli dati di dominio della demo sono Player e Match.
+// Player: id e username obbligatorio e univoco (anche senza distinguere maiuscole).
+// Match: id, date, winnerIds e winningScore (almeno -4: nel mazzo ci sono quattro jolly).
+// Vittorie, serie attuale e miglior serie si calcolano dai match; non sono salvate su Player.
+const players = [
+  { id: 1, username: 'Alexandru B.' },
+  { id: 2, username: 'Giada C.' },
+  { id: 3, username: 'Dario C.' },
+  { id: 4, username: 'Andrei C.' },
+  { id: 5, username: 'Salvatore C.' },
+  { id: 6, username: 'Giuseppe D. S.' },
+  { id: 7, username: 'Francesco G.' },
+  { id: 8, username: 'Paolo G.' },
+  { id: 9, username: 'Peter H.' },
+  { id: 10, username: 'Federico S. H.' },
+  { id: 11, username: 'Ludovico L.' },
+  { id: 12, username: 'Stefano M.' },
+  { id: 13, username: 'Francesca M.' },
+  { id: 14, username: 'Martina N.' },
+  { id: 15, username: 'Giuseppe N.' },
+  { id: 16, username: 'Simone N.' },
+  { id: 17, username: 'Maria Chiara R.' },
+  { id: 18, username: 'Federico R.' },
+  { id: 19, username: 'Nasim S.' },
+  { id: 20, username: 'Anatoliy S.' },
+  { id: 21, username: 'Riccardo S.' },
+  { id: 22, username: 'Fabio S.' },
+  { id: 23, username: 'Tanase A. I.' },
+  { id: 24, username: 'Niccolò T.' },
+  { id: 25, username: 'Khrystyna T.' },
+  { id: 26, username: 'Tuca L.' },
+  { id: 27, username: 'Luca V.' },
+  { id: 28, username: 'Tito V.' },
+  { id: 29, username: 'Alessandra Z.' },
+]
+
+const usernames = new Set()
+for (const player of players) {
+  const username = player.username?.trim()
+  if (!username || usernames.has(username.toLocaleLowerCase())) {
+    throw new Error('I mock Player richiedono username non vuoti e univoci')
+  }
+  usernames.add(username.toLocaleLowerCase())
+}
+
+// Lo storico dimostrativo produce vittorie da 1 a 20 e mostra anche un pareggio.
+// L'ordine cronologico è necessario per calcolare le serie senza contatori salvati.
+const targetWins = players.map((player) => Math.max(1, 21 - player.id))
+const remainingWins = targetWins.map((wins, index) => wins - (index === 0 ? 3 : 0))
+const demoWinners = [[7, 8]]
+remainingWins[6] -= 1
+remainingWins[7] -= 1
+
+for (let index = 0; index < players.length; index += 1) {
+  const openingStreak = Math.min(remainingWins[index], Math.ceil(targetWins[index] / 4))
+  for (let win = 0; win < openingStreak; win += 1) demoWinners.push([players[index].id])
+  remainingWins[index] -= openingStreak
+}
+
+while (remainingWins.some((wins) => wins > 0)) {
+  for (let index = 0; index < players.length; index += 1) {
+    if (remainingWins[index] > 0) {
+      demoWinners.push([players[index].id])
+      remainingWins[index] -= 1
+    }
+  }
+}
+
+demoWinners.push([1], [1], [1])
+const lastDemoDate = Date.UTC(2026, 9, 22, 18, 30)
+const dayInMilliseconds = 24 * 60 * 60 * 1000
+
 export const mockData = {
-  players: [
-    { id: 1, name: 'Alexandru', surname: 'B.', wins: 20, winStreak: 3, bestScore: 0 },
-    { id: 2, name: 'Giada', surname: 'C.', wins: 19, winStreak: 0, bestScore: 0 },
-    { id: 3, name: 'Dario', surname: 'C.', wins: 18, winStreak: 0, bestScore: 0 },
-    { id: 4, name: 'Andrei', surname: 'C.', wins: 17, winStreak: 0, bestScore: 0 },
-    { id: 5, name: 'Salvatore', surname: 'C.', wins: 16, winStreak: 0, bestScore: 0 },
-    { id: 6, name: 'Giuseppe', surname: 'D. S.', wins: 15, winStreak: 0, bestScore: 0 },
-    { id: 7, name: 'Francesco', surname: 'G.', wins: 14, winStreak: 0, bestScore: 0 },
-    { id: 8, name: 'Paolo', surname: 'G.', wins: 13, winStreak: 0, bestScore: 0 },
-    { id: 9, name: 'Peter', surname: 'H.', wins: 12, winStreak: 0, bestScore: 0 },
-    { id: 10, name: 'Federico', surname: 'S. H.', wins: 11, winStreak: 0, bestScore: 0 },
-    { id: 11, name: 'Ludovico', surname: 'L.', wins: 10, winStreak: 0, bestScore: 0 },
-    { id: 12, name: 'Stefano', surname: 'M.', wins: 9, winStreak: 0, bestScore: 0 },
-    { id: 13, name: 'Francesca', surname: 'M.', wins: 8, winStreak: 0, bestScore: 0 },
-    { id: 14, name: 'Martina', surname: 'N.', wins: 7, winStreak: 0, bestScore: 0 },
-    { id: 15, name: 'Giuseppe', surname: 'N.', wins: 6, winStreak: 0, bestScore: 0 },
-    { id: 16, name: 'Simone', surname: 'N.', wins: 5, winStreak: 0, bestScore: 0 },
-    { id: 17, name: 'Maria Chiara', surname: 'R.', wins: 4, winStreak: 0, bestScore: 0 },
-    { id: 18, name: 'Federico', surname: 'R.', wins: 3, winStreak: 0, bestScore: 0 },
-    { id: 19, name: 'Nasim', surname: 'S.', wins: 2, winStreak: 0, bestScore: 0 },
-    { id: 20, name: 'Anatoliy', surname: 'S.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 21, name: 'Riccardo', surname: 'S.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 22, name: 'Fabio', surname: 'S.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 23, name: 'Tanase', surname: 'A. I.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 24, name: 'Niccolò', surname: 'T.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 25, name: 'Khrystyna', surname: 'T.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 26, name: 'Tuca', surname: 'L.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 27, name: 'Luca', surname: 'V.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 28, name: 'Tito', surname: 'V.', wins: 1, winStreak: 0, bestScore: 0 },
-    { id: 29, name: 'Alessandra', surname: 'Z.', wins: 1, winStreak: 0, bestScore: 0 },
-  ].map((player) => ({
-    ...player,
-    bestWinStreak: Math.max(player.winStreak, Math.min(player.wins, Math.ceil(player.wins / 4))),
-    bestScore: [player.bestScore],
+  players,
+  matches: demoWinners.map((winnerIds, index) => ({
+    id: index + 1,
+    date: new Date(lastDemoDate - (demoWinners.length - index - 1) * dayInMilliseconds).toISOString(),
+    winnerIds,
+    winningScore: Math.max(-Math.floor(4 / winnerIds.length), (index * 7) % 19 - 4),
   })),
-  matches: [
-    { id: 1001, date: '2026-10-04T19:10:00.000Z', winnerIds: [7, 8], winnerScores: [0] },
-    { id: 1002, date: '2026-10-06T17:30:00.000Z', winnerIds: [6], winnerScores: [0] },
-    { id: 1003, date: '2026-10-08T20:00:00.000Z', winnerIds: [5], winnerScores: [0] },
-    { id: 1004, date: '2026-10-10T18:20:00.000Z', winnerIds: [4], winnerScores: [0] },
-    { id: 1005, date: '2026-10-12T19:30:00.000Z', winnerIds: [3], winnerScores: [0] },
-    { id: 1006, date: '2026-10-14T18:00:00.000Z', winnerIds: [2], winnerScores: [0] },
-    { id: 1007, date: '2026-10-16T20:15:00.000Z', winnerIds: [1], winnerScores: [0] },
-    { id: 1008, date: '2026-10-18T17:45:00.000Z', winnerIds: [1], winnerScores: [0] },
-    { id: 1009, date: '2026-10-20T19:00:00.000Z', winnerIds: [1], winnerScores: [0] },
-    { id: 1010, date: '2026-10-22T18:30:00.000Z', winnerIds: [1], winnerScores: [0] },
-  ],
 }

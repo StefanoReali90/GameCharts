@@ -3,7 +3,7 @@
   "nav.label": "मुख्य नेव्हिगेशन",
   "nav.pages": "पाने",
   "nav.leaderboard": "क्रमवारी",
-  "nav.history": "सामन्यांचा इतिहास",
+  "nav.history": "अलीकडील सामने",
   "nav.settings": "सेटिंग्ज",
   "nav.open": "बाजूचा पट्टा उघडा",
   "nav.close": "बाजूचा पट्टा बंद करा",
@@ -40,7 +40,7 @@
   "profile.cards": "{name} चे प्रोफाइल चित्र: {cards}",
   "profile.empty": "{name} चे प्रोफाइल चित्र",
   "scores.aria": "गुण: {scores}",
-  "history.title": "सामन्यांचा इतिहास",
+  "history.title": "अलीकडील सामने",
   "history.add": "सामना जोडा",
   "history.help": "गुण स्वल्पविरामाने वेगळे करा. जतन करताना तारीख आपोआप निश्चित होते.",
   "history.winner": "विजेते",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "चढता",
   "leaderboard.descending": "उतरता",
   "leaderboard.cancel": "रद्द करा",
+  "leaderboard.clearSearch": "शोध साफ करा",
+  "history.searchWinners": "विजेते शोधा",
+  "leaderboard.risen": "{count} स्थानांनी वर",
+  "leaderboard.fallen": "{count} स्थानांनी खाली",
   "leaderboard.bestStreak": "सर्वोत्तम विजयमालिका"
 }

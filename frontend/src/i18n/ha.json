@@ -3,7 +3,7 @@
   "nav.label": "Babban kewaya",
   "nav.pages": "Shafuka",
   "nav.leaderboard": "Jerin matsayi",
-  "nav.history": "Tarihin wasanni",
+  "nav.history": "Wasannin baya-bayan nan",
   "nav.settings": "Saituna",
   "nav.open": "Buɗe gefen shafi",
   "nav.close": "Rufe gefen shafi",
@@ -40,7 +40,7 @@
   "profile.cards": "Hoton bayanin {name}: {cards}",
   "profile.empty": "Hoton bayanin {name}",
   "scores.aria": "Maki: {scores}",
-  "history.title": "Tarihin wasanni",
+  "history.title": "Wasannin baya-bayan nan",
   "history.add": "Ƙara wasa",
   "history.help": "Raba maki da waƙafi. Ana saita kwanan wata ta atomatik lokacin ajiya.",
   "history.winner": "Masu nasara",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "na hawa",
   "leaderboard.descending": "na sauka",
   "leaderboard.cancel": "Soke",
+  "leaderboard.clearSearch": "Share bincike",
+  "history.searchWinners": "Nemo masu nasara",
+  "leaderboard.risen": "Ya hau matsayi {count}",
+  "leaderboard.fallen": "Ya sauka matsayi {count}",
   "leaderboard.bestStreak": "Mafi kyawun jerin nasarori"
 }

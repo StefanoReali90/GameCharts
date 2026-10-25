@@ -3,7 +3,7 @@
   "nav.label": "主导航",
   "nav.pages": "页面",
   "nav.leaderboard": "排行榜",
-  "nav.history": "比赛历史",
+  "nav.history": "最近比赛",
   "nav.settings": "设置",
   "nav.open": "打开侧边栏",
   "nav.close": "关闭侧边栏",
@@ -40,7 +40,7 @@
   "profile.cards": "{name} 的头像：{cards}",
   "profile.empty": "{name} 的头像",
   "scores.aria": "分数：{scores}",
-  "history.title": "比赛历史",
+  "history.title": "最近比赛",
   "history.add": "添加比赛",
   "history.help": "用逗号分隔分数。保存时会自动设置日期。",
   "history.winner": "获胜者",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "升序",
   "leaderboard.descending": "降序",
   "leaderboard.cancel": "取消",
+  "leaderboard.clearSearch": "清除搜索",
+  "history.searchWinners": "搜索获胜者",
+  "leaderboard.risen": "上升 {count} 位",
+  "leaderboard.fallen": "下降 {count} 位",
   "leaderboard.bestStreak": "最佳连胜"
 }

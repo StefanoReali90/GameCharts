@@ -1,57 +1,55 @@
 import { mockData } from './mockData.js'
-import { scoreTotal, validateScores } from '../utils/scores.js'
 
-const storageKey = 'gamechart-mock-data-v8'
-const previousStorageKeys = ['gamechart-mock-data-v7', 'gamechart-mock-data-v6', 'gamechart-mock-data-v5', 'gamechart-mock-data-v4', 'gamechart-mock-data-v3']
+const storageKey = 'gamechart-mock-data-v10'
+const previousStorageKeys = [9, 8, 7, 6, 5, 4, 3].map((version) => `gamechart-mock-data-v${version}`)
 
-function isUntouchedDemo(data) {
+function isLegacyDemo(data) {
   return data.players.length === mockData.players.length
-    && data.players.every((player) => player.wins === 0 && player.winStreak === 0)
-    && data.matches.length === mockData.matches.length
-    && data.matches.every((match, index) => match.id === mockData.matches[index].id)
+    && data.matches.length >= 10
+    && data.matches.slice(0, 10).every((match, index) => match.id === 1001 + index)
 }
 
-function isSeededDemo(data) {
-  return data.players.length === mockData.players.length
-    && data.players.every((player, index) => player.id === mockData.players[index].id
-      && player.wins === mockData.players[index].wins
-      && player.winStreak === mockData.players[index].winStreak)
-    && data.matches.length === mockData.matches.length
-    && data.matches.every((match, index) => match.id === mockData.matches[index].id)
-}
-
-function migrateLowestScore(previous) {
-  const matches = previous.matches.map(({ winnerScore, ...match }) => ({
-    ...match,
-    winnerScores: Array.isArray(match.winnerScores) ? match.winnerScores : [winnerScore],
-  }))
-  const players = previous.players.map((player) => {
-    if (!player.wins) return { ...player, bestScore: 0 }
-    const recentWins = matches.filter((match) => match.winnerId === player.id).slice(-player.wins)
-    return recentWins.length
-      ? { ...player, bestScore: Math.min(...recentWins.map((match) => scoreTotal(match.winnerScores))) }
-      : player
-  })
-  return { players, matches }
-}
-
-function migrateWinners(previous) {
-  const matches = previous.matches.map(({ winnerId, ...match }) => ({
-    ...match,
-    winnerIds: Array.isArray(match.winnerIds) ? match.winnerIds : [winnerId],
-  }))
-  return {
-    ...previous,
-    players: previous.players.map((player) => ({
-      ...player,
-      bestWinStreak: Math.max(player.winStreak ?? 0, player.bestWinStreak ?? 0),
-      bestScore: Array.isArray(player.bestScore) ? player.bestScore : (
-        matches.findLast((match) => match.winnerIds.includes(player.id)
-          && scoreTotal(match.winnerScores) === player.bestScore)?.winnerScores ?? [player.bestScore ?? 0]
-      ),
-    })),
-    matches,
+function normalizeMatch(match) {
+  const winnerIds = Array.isArray(match.winnerIds) ? match.winnerIds.map(Number) : [Number(match.winnerId)]
+  if (!Number.isSafeInteger(match.id) || !Number.isFinite(Date.parse(match.date))
+    || !winnerIds.length || winnerIds.some((id) => !Number.isSafeInteger(id))
+    || new Set(winnerIds).size !== winnerIds.length) {
+    throw new Error('INVALID_MATCH_DATA')
   }
+  const priorScore = Array.isArray(match.winnerScores)
+    ? match.winnerScores.reduce((total, score) => total + score, 0)
+    : match.winnerScore
+  const previousScore = Number.isSafeInteger(match.winningScore)
+    ? match.winningScore : Number.isSafeInteger(priorScore) ? priorScore : 0
+  const winningScore = Math.max(-Math.floor(4 / winnerIds.length), previousScore)
+  return { id: match.id, date: match.date, winnerIds, winningScore }
+}
+
+function normalizeLegacyData(data) {
+  if (data.players.length === mockData.players.length
+    && data.matches.length >= mockData.matches.length
+    && data.matches.slice(0, mockData.matches.length).every((match, index) => match.id === mockData.matches[index].id)) {
+    const demo = structuredClone(mockData)
+    return { ...demo, matches: [...demo.matches, ...data.matches.slice(demo.matches.length).map(normalizeMatch)] }
+  }
+  if (isLegacyDemo(data)) {
+    const demo = structuredClone(mockData)
+    return { ...demo, matches: [...demo.matches, ...data.matches.slice(10).map(normalizeMatch)] }
+  }
+
+  const players = data.players.map((player) => ({
+    id: player.id,
+    username: typeof player.username === 'string'
+      ? player.username.trim()
+      : `${player.name ?? ''} ${player.surname ?? ''}`.trim(),
+  }))
+  const usernames = players.map((player) => player.username.toLocaleLowerCase())
+  if (players.some((player) => !Number.isSafeInteger(player.id) || !player.username)
+    || new Set(usernames).size !== players.length
+    || new Set(players.map((player) => player.id)).size !== players.length) {
+    throw new Error('INVALID_PLAYER_DATA')
+  }
+  return { players, matches: data.matches.map(normalizeMatch) }
 }
 
 export function loadMatchData() {
@@ -62,10 +60,7 @@ export function loadMatchData() {
     for (const previousKey of previousStorageKeys) {
       const previous = JSON.parse(window.localStorage.getItem(previousKey))
       if (previous && Array.isArray(previous.players) && Array.isArray(previous.matches)) {
-        const migrated = isUntouchedDemo(previous) || isSeededDemo(previous)
-          ? structuredClone(mockData)
-          : migrateWinners(previousKey.endsWith('-v7') || previousKey.endsWith('-v6') || previousKey.endsWith('-v5')
-            ? previous : migrateLowestScore(previous))
+        const migrated = normalizeLegacyData(previous)
         window.localStorage.setItem(storageKey, JSON.stringify(migrated))
         return migrated
       }
@@ -84,7 +79,7 @@ export function saveMatchData(data) {
   }
 }
 
-export function addMatch(data, winnerIds, winnerScores, date = new Date()) {
+export function addMatch(data, winnerIds, winningScore, date = new Date()) {
   const playerIds = Array.isArray(winnerIds) ? winnerIds.map(Number) : []
   const validPlayers = new Set(data.players.map((player) => player.id))
   if (!playerIds.length || new Set(playerIds).size !== playerIds.length
@@ -93,21 +88,18 @@ export function addMatch(data, winnerIds, winnerScores, date = new Date()) {
     error.code = 'INVALID_PLAYER'
     throw error
   }
-  const scores = [...validateScores(winnerScores)]
-  const total = scoreTotal(scores)
-
-  const match = {
-    id: Math.max(0, ...data.matches.map((item) => item.id)) + 1,
-    date: date.toISOString(),
-    winnerIds: playerIds,
-    winnerScores: scores,
+  if (!Number.isSafeInteger(winningScore) || winningScore < -Math.floor(4 / playerIds.length)) {
+    const error = new Error('INVALID_WINNING_SCORE')
+    error.code = 'INVALID_WINNING_SCORE'
+    throw error
   }
   return {
-    players: data.players.map((player) => playerIds.includes(player.id)
-      ? { ...player, wins: player.wins + 1, winStreak: player.winStreak + 1,
-        bestWinStreak: Math.max(player.bestWinStreak ?? 0, player.winStreak + 1),
-        bestScore: player.wins === 0 || total < scoreTotal(player.bestScore) ? [...scores] : player.bestScore }
-      : { ...player, winStreak: 0 }),
-    matches: [...data.matches, match],
+    players: data.players,
+    matches: [...data.matches, {
+      id: Math.max(0, ...data.matches.map((match) => match.id)) + 1,
+      date: date.toISOString(),
+      winnerIds: playerIds,
+      winningScore,
+    }],
   }
 }

@@ -3,7 +3,7 @@
   "nav.label": "メインナビゲーション",
   "nav.pages": "ページ",
   "nav.leaderboard": "ランキング",
-  "nav.history": "対戦履歴",
+  "nav.history": "最近の試合",
   "nav.settings": "設定",
   "nav.open": "サイドバーを開く",
   "nav.close": "サイドバーを閉じる",
@@ -40,7 +40,7 @@
   "profile.cards": "{name}のプロフィール画像：{cards}",
   "profile.empty": "{name}のプロフィール画像",
   "scores.aria": "スコア：{scores}",
-  "history.title": "対戦履歴",
+  "history.title": "最近の試合",
   "history.add": "対戦を追加",
   "history.help": "スコアはカンマで区切ってください。保存時に日時が自動設定されます。",
   "history.winner": "勝者",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "昇順",
   "leaderboard.descending": "降順",
   "leaderboard.cancel": "キャンセル",
+  "leaderboard.clearSearch": "検索をクリア",
+  "history.searchWinners": "勝者を検索",
+  "leaderboard.risen": "{count}位上昇",
+  "leaderboard.fallen": "{count}位下降",
   "leaderboard.bestStreak": "最高連勝"
 }

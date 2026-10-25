@@ -23,7 +23,7 @@ export default function PlayerAvatar({ player, size = 'small' }) {
         cards.length === 3 && 'playing-card-avatar--triple',
       )}
       role="img"
-      aria-label={t(cards.length ? 'profile.cards' : 'profile.empty', { name: player.fullName ?? `${player.name} ${player.surname}`, cards: cards.map((card) => cardLabel(card, t)).join(', ') })}
+      aria-label={t(cards.length ? 'profile.cards' : 'profile.empty', { name: player.username, cards: cards.map((card) => cardLabel(card, t)).join(', ') })}
     >
       {cards.length
         ? cards.map((card, index) => <PlayingCardThumbnail key={`${card.kind}-${card.rank ?? ''}-${card.suit ?? ''}-${index}`} card={card} className={cn(size === 'large' ? 'h-[54px] w-[38px]' : 'h-[46px] w-[32px]', index > 0 && '-ml-2')} />)

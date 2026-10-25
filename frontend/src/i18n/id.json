@@ -3,7 +3,7 @@
   "nav.label": "Navigasi utama",
   "nav.pages": "Halaman",
   "nav.leaderboard": "Peringkat",
-  "nav.history": "Riwayat pertandingan",
+  "nav.history": "Pertandingan terbaru",
   "nav.settings": "Pengaturan",
   "nav.open": "Buka bilah samping",
   "nav.close": "Tutup bilah samping",
@@ -40,7 +40,7 @@
   "profile.cards": "Foto profil {name}: {cards}",
   "profile.empty": "Foto profil {name}",
   "scores.aria": "Skor: {scores}",
-  "history.title": "Riwayat pertandingan",
+  "history.title": "Pertandingan terbaru",
   "history.add": "Tambah pertandingan",
   "history.help": "Pisahkan skor dengan koma. Tanggal diatur otomatis saat menyimpan.",
   "history.winner": "Para pemenang",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "menaik",
   "leaderboard.descending": "menurun",
   "leaderboard.cancel": "Batal",
+  "leaderboard.clearSearch": "Hapus pencarian",
+  "history.searchWinners": "Cari pemenang",
+  "leaderboard.risen": "Naik {count} posisi",
+  "leaderboard.fallen": "Turun {count} posisi",
   "leaderboard.bestStreak": "Rentetan kemenangan terbaik"
 }

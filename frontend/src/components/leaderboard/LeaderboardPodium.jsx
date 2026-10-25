@@ -9,8 +9,8 @@ const entranceStagger = 0.4
 const impactPoint = 0.62
 
 const podiumPlaces = [
-  { rank: 1, tone: 'gold', gridClass: 'col-span-2 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:pb-6', heightClass: 'min-h-[150px] sm:min-h-[165px]', flight: { x: 0, y: -100, rotate: 0 } },
-  { rank: 2, tone: 'silver', gridClass: 'col-span-1 sm:col-start-1 sm:row-start-1 sm:pb-3', heightClass: 'min-h-[135px] sm:min-h-[150px]', flight: { x: -90, y: -70, rotate: -10 } },
+  { rank: 1, tone: 'gold', gridClass: 'col-span-2 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:pb-4', heightClass: 'min-h-[150px] sm:min-h-[165px]', flight: { x: 0, y: -100, rotate: 0 } },
+  { rank: 2, tone: 'silver', gridClass: 'col-span-1 sm:col-start-1 sm:row-start-1 sm:pb-2', heightClass: 'min-h-[135px] sm:min-h-[150px]', flight: { x: -90, y: -70, rotate: -10 } },
   { rank: 3, tone: 'bronze', gridClass: 'col-span-1 sm:col-start-3 sm:row-start-1', heightClass: 'min-h-[135px] sm:min-h-[145px]', flight: { x: 90, y: -70, rotate: 10 } },
 ]
 

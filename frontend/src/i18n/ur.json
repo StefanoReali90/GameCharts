@@ -3,7 +3,7 @@
   "nav.label": "مرکزی نیویگیشن",
   "nav.pages": "صفحات",
   "nav.leaderboard": "درجہ بندی",
-  "nav.history": "میچ کی تاریخ",
+  "nav.history": "تازہ ترین میچ",
   "nav.settings": "ترتیبات",
   "nav.open": "سائیڈ بار کھولیں",
   "nav.close": "سائیڈ بار بند کریں",
@@ -40,7 +40,7 @@
   "profile.cards": "{name} کی پروفائل تصویر: {cards}",
   "profile.empty": "{name} کی پروفائل تصویر",
   "scores.aria": "اسکور: {scores}",
-  "history.title": "میچ کی تاریخ",
+  "history.title": "تازہ ترین میچ",
   "history.add": "میچ شامل کریں",
   "history.help": "اسکور کو کاما سے الگ کریں۔ محفوظ کرتے وقت تاریخ خودکار طور پر طے ہوگی۔",
   "history.winner": "فاتحین",
@@ -75,5 +75,9 @@
   "leaderboard.ascending": "صعودی",
   "leaderboard.descending": "نزولی",
   "leaderboard.cancel": "منسوخ کریں",
+  "leaderboard.clearSearch": "تلاش صاف کریں",
+  "history.searchWinners": "فاتحین تلاش کریں",
+  "leaderboard.risen": "{count} درجے اوپر",
+  "leaderboard.fallen": "{count} درجے نیچے",
   "leaderboard.bestStreak": "بہترین مسلسل فتوحات"
 }
