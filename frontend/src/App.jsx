@@ -49,19 +49,22 @@ export default function App() {
 
   useEffect(() => {
     const unlock = () => unlockEffectsAudio()
-    const playButtonSound = (event) => {
-      const button = event.target.closest?.('button')
-      if (!button || button.disabled) return
-      if (button.dataset.sound === 'page') playPageChange()
-      else playButtonClick()
+    const playInteractionSound = (event) => {
+      const target = event.target
+      if (!target.closest?.('.app-shell, .leaderboard-name-filter-popover')) return
+      const button = target.closest('button')
+      if (button?.disabled || target.closest('[aria-disabled="true"]')) return
+      if (target.closest('label') && !target.closest('input, select, textarea')) return
+      playButtonClick()
+      if (button?.dataset.sound === 'page') playPageChange()
     }
     document.addEventListener('pointerdown', unlock, true)
     document.addEventListener('keydown', unlock, true)
-    document.addEventListener('click', playButtonSound, true)
+    document.addEventListener('click', playInteractionSound, true)
     return () => {
       document.removeEventListener('pointerdown', unlock, true)
       document.removeEventListener('keydown', unlock, true)
-      document.removeEventListener('click', playButtonSound, true)
+      document.removeEventListener('click', playInteractionSound, true)
     }
   }, [])
 

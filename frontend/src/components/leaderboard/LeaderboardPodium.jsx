@@ -93,7 +93,9 @@ export default function LeaderboardPodium({ players, expanded, entranceReady, en
           }}
           variants={podiumVariants[index]}
         >
-          <PodiumCard {...place} label={t('leaderboard.place', { rank: place.rank })} impactActive={!expanded && impactedRanks.includes(place.rank)} floatingEnabled={!expanded && entranceFinished && litRanks.includes(place.rank)} className={place.heightClass} player={players.find((player) => player.position === place.rank)} />
+          <div className={`podium-lift${!expanded && impactedRanks.includes(place.rank) ? ' podium-lift--impact' : ''}`}>
+            <PodiumCard {...place} label={t('leaderboard.place', { rank: place.rank })} impactActive={!expanded && impactedRanks.includes(place.rank)} floatingEnabled={!expanded && entranceFinished && litRanks.includes(place.rank)} className={place.heightClass} player={players.find((player) => player.position === place.rank)} />
+          </div>
         </motion.div>
       ))}
     </section>

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Maximize2, Minimize2 } from 'lucide-react'
 import { useReducedMotion } from 'framer-motion'
 import { buildLeaderboard, selectLeaderboardPlayers } from '../../utils/leaderboard.js'
@@ -12,12 +12,16 @@ import { useI18n } from '../../i18n/I18nProvider.jsx'
 export default function Leaderboard({ data, entranceReady = true, entranceFinished = false, onEntranceComplete }) {
   const { t, locale } = useI18n()
   const [tableExpanded, setTableExpanded] = useState(false)
+  const [layoutExpanded, setLayoutExpanded] = useState(false)
   const [tableMotion, setTableMotion] = useState('idle')
   const [nameQuery, setNameQuery] = useState('')
   const [sort, setSort] = useState({ key: 'position', direction: 'asc' })
   const [podiumHeight, setPodiumHeight] = useState(null)
   const podiumRef = useRef(null)
+  const closeTimer = useRef(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), [])
 
   useLayoutEffect(() => {
     const podium = podiumRef.current
@@ -39,25 +43,38 @@ export default function Leaderboard({ data, entranceReady = true, entranceFinish
     : { key, direction: key === 'position' || key === 'name' ? 'asc' : 'desc' })
 
   const toggleTable = () => {
-    setTableMotion(tableExpanded ? 'closing' : 'opening')
-    setTableExpanded(!tableExpanded)
+    window.clearTimeout(closeTimer.current)
+    if (tableExpanded) {
+      setTableMotion('closing')
+      setTableExpanded(false)
+      const completeClose = () => {
+        setTableMotion('idle')
+        setLayoutExpanded(false)
+      }
+      if (reducedMotion) completeClose()
+      else closeTimer.current = window.setTimeout(completeClose, 1250)
+    } else {
+      setLayoutExpanded(true)
+      setTableMotion('opening')
+      setTableExpanded(true)
+    }
   }
 
   return (
     <div className={cn(
       'leaderboard-content grid min-h-0 overflow-visible',
       podiumHeight !== null && !reducedMotion && 'transition-[grid-template-rows,row-gap] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]',
-      tableExpanded ? 'h-full' : 'h-full max-[760px]:h-auto max-[760px]:min-h-full',
+      layoutExpanded ? 'h-full' : 'h-full max-[760px]:h-auto max-[760px]:min-h-full',
     )}
       style={{
-        gridTemplateRows: podiumHeight === null ? 'auto minmax(0, 1fr)' : `${tableExpanded ? 0 : podiumHeight}px minmax(0, 1fr)`,
-        rowGap: tableExpanded ? 0 : 16,
+        gridTemplateRows: podiumHeight === null ? 'auto minmax(0, 1fr)' : `${layoutExpanded ? 0 : podiumHeight}px minmax(0, 1fr)`,
+        rowGap: layoutExpanded ? 0 : 16,
       }}
     >
-      <div className="min-h-0 self-start" aria-hidden={tableExpanded || !entranceReady} inert={tableExpanded}>
+      <div className="min-h-0 self-start" aria-hidden={layoutExpanded || !entranceReady} inert={layoutExpanded}>
         <LeaderboardPodium
           podiumRef={podiumRef}
-          expanded={tableExpanded}
+          expanded={layoutExpanded}
           entranceReady={entranceReady}
           entranceFinished={entranceFinished}
           onEntranceComplete={onEntranceComplete}

@@ -648,9 +648,8 @@
 }
 
 .leaderboard-table[data-motion='closing'][data-expanded='false'] tr[data-rank] .leaderboard-cell {
+  height: 56px;
   animation: leaderboard-medal-enter 780ms cubic-bezier(0.2, 0.85, 0.25, 1) calc(var(--rank-delay) + var(--cell-exit-delay)) both reverse;
-  transition-duration: 420ms, 0ms;
-  transition-delay: calc(var(--rank-delay) + 780ms), 0ms;
 }
 
 .leaderboard-table[data-motion='closing'][data-expanded='false'] tr[data-rank] .leaderboard-cell::after {
@@ -805,8 +804,20 @@
   }
 }
 
-.podium-place > .podium-card {
+.podium-lift {
+  position: relative;
   z-index: 1;
+}
+
+.podium-lift--impact {
+  animation: podium-lift 10s linear infinite;
+}
+
+@keyframes podium-lift {
+  0% { transform: translateY(0); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  6% { transform: translateY(-10px); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  12% { transform: translateY(-7px); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  19%, 100% { transform: translateY(0); }
 }
 
 .podium-card {

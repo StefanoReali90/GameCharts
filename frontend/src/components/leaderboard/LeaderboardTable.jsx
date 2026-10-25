@@ -17,7 +17,7 @@ export default function LeaderboardTable({ players, expanded, motion, sort, onSo
   const { t, locale } = useI18n()
   const [filterOpen, setFilterOpen] = useState(false)
   const filterButtonRef = useRef(null)
-  const hasVisiblePlayers = players.some((player) => expanded || player.position > 3)
+  const hasVisiblePlayers = players.some((player) => expanded || motion === 'closing' || player.position > 3)
 
   const closeFilter = useCallback((restoreFocus = false) => {
     setFilterOpen(false)
@@ -74,7 +74,7 @@ export default function LeaderboardTable({ players, expanded, motion, sort, onSo
             <tr
               key={player.id}
               data-rank={player.position <= 3 ? player.position : undefined}
-              aria-hidden={!expanded && player.position <= 3}
+              aria-hidden={!expanded && motion !== 'closing' && player.position <= 3}
               className="leaderboard-data-row transition-colors hover:bg-cyber-cyan/[0.045]"
             >
               <td>

@@ -142,7 +142,7 @@ export function playButtonClick() {
 export function playPageChange() {
   if (effectsVolume === 0) return
   withAudio((context) => {
-    const start = context.currentTime
+    const start = context.currentTime + 0.085
     bell(context, 392, start, 0.18, 0.032 * effectsVolume)
     bell(context, 523.25, start + 0.075, 0.24, 0.043 * effectsVolume)
   })
