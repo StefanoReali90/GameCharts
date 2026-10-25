@@ -564,7 +564,7 @@
 }
 
 .page-container > section[aria-labelledby='leaderboard-page-title'] .page-heading::after {
-  bottom: 6px;
+  bottom: 12px;
 }
 
 .leaderboard-results::before {

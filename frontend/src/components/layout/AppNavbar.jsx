@@ -3,7 +3,7 @@ import HamburgerButton from './HamburgerButton.jsx'
 
 export default function AppNavbar({ sidebarOpen, onSidebarToggle }) {
   return (
-    <header className="app-navbar relative z-30 flex h-[68px] min-w-0 items-center gap-3 px-4 sm:px-6">
+    <header className="app-navbar relative z-30 flex h-[68px] min-w-0 items-center gap-3 pl-2 pr-4 sm:pr-6">
       <HamburgerButton expanded={sidebarOpen} onClick={onSidebarToggle} />
       <NeonTitle
         as="h1"
