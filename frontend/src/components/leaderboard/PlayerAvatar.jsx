@@ -1,23 +1,32 @@
-import { motion } from 'framer-motion'
 import { UserRound } from 'lucide-react'
-import { useFloatingTilt } from '../../hooks/useFloatingTilt.js'
+import { cardLabel, cardsForPosition } from '../../utils/positionCards.js'
+import { cn } from '../../lib/utils.ts'
+import PlayingCardThumbnail from '../ui/PlayingCardThumbnail.jsx'
+import { useI18n } from '../../i18n/I18nProvider.jsx'
 
 export default function PlayerAvatar({ player, size = 'small' }) {
-  const floating = useFloatingTilt({ tilt: 5, float: 1.5, duration: 5.8 })
-  const sizeClasses = size === 'large' ? 'h-11 w-11' : 'h-9 w-9'
+  const { t } = useI18n()
+  const cards = cardsForPosition(player.position)
+  const sizeClasses = size === 'large'
+    ? cards.length > 2 ? 'h-[58px] w-[102px]' : cards.length > 1 ? 'h-[58px] w-[72px]' : 'h-[58px] w-[44px]'
+    : cards.length > 2 ? 'h-[50px] w-[84px]' : cards.length > 1 ? 'h-[50px] w-[62px]' : 'h-[50px] w-[36px]'
 
   return (
-    <motion.span
-      className={`leaderboard-avatar inline-grid ${sizeClasses} shrink-0 place-items-center rounded-xl border border-cyber-cyan/30 bg-cyber-cyan/10 text-cyan-100 shadow-neon-cyan transform-gpu`}
-      style={floating.style}
-      animate={floating.animate}
-      transition={floating.transition}
-      onPointerMove={floating.onPointerMove}
-      onPointerLeave={floating.onPointerLeave}
+    <span
+      className={cn(
+        'leaderboard-avatar relative inline-flex shrink-0 items-center justify-center',
+        sizeClasses,
+        cards.length
+          ? 'playing-card-avatar overflow-visible rounded-lg border border-cyber-cyan/35 bg-cyber-panel/70 p-[1px] shadow-[0_4px_12px_rgb(0_0_0/0.35)]'
+          : 'rounded-xl border border-cyber-cyan/30 bg-cyber-cyan/10 text-cyan-100 shadow-neon-cyan',
+        cards.length > 1 && 'playing-card-avatar--pair',
+      )}
       role="img"
-      aria-label={`Avatar di ${player.name}`}
+      aria-label={t(cards.length ? 'profile.cards' : 'profile.empty', { name: player.fullName ?? `${player.name} ${player.surname}`, cards: cards.map((card) => cardLabel(card, t)).join(', ') })}
     >
-      <UserRound className={size === 'large' ? 'h-5 w-5' : 'h-4 w-4'} aria-hidden="true" />
-    </motion.span>
+      {cards.length
+        ? cards.map((card, index) => <PlayingCardThumbnail key={`${card.kind}-${card.rank ?? ''}-${card.suit ?? ''}-${index}`} card={card} className={cn(size === 'large' ? 'h-[54px] w-[38px]' : 'h-[46px] w-[32px]', index > 0 && '-ml-2')} />)
+        : <UserRound className={size === 'large' ? 'h-5 w-5' : 'h-4 w-4'} aria-hidden="true" />}
+    </span>
   )
 }

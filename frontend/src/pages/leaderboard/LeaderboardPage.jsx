@@ -1,10 +1,12 @@
 import { Leaderboard } from '../../components/leaderboard/index.js'
 import PageFrame from '../../components/layout/PageFrame.jsx'
+import { useI18n } from '../../i18n/I18nProvider.jsx'
 
-export default function LeaderboardPage({ entranceReady }) {
+export default function LeaderboardPage({ entranceReady, entranceFinished, onEntranceComplete, data }) {
+  const { t } = useI18n()
   return (
-    <PageFrame title="Leaderboard" titleId="leaderboard-page-title">
-      <Leaderboard entranceReady={entranceReady} />
+    <PageFrame title={t('leaderboard.title')} titleId="leaderboard-page-title" titleSize="lg">
+      <Leaderboard entranceReady={entranceReady} entranceFinished={entranceFinished} onEntranceComplete={onEntranceComplete} data={data} />
     </PageFrame>
   )
 }

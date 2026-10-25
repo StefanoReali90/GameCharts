@@ -1,21 +1,20 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Maximize2, Minimize2 } from 'lucide-react'
 import { useReducedMotion } from 'framer-motion'
-import mockData from '../../data/mockData.json'
-import { buildLeaderboard } from '../../utils/leaderboard.js'
+import { buildLeaderboard, selectLeaderboardPlayers } from '../../utils/leaderboard.js'
 import { cn } from '../../lib/utils.ts'
 import NeonButton from '../ui/NeonButton.jsx'
-import NeonCard from '../ui/NeonCard.jsx'
-import LeaderboardFilters from './LeaderboardFilters.jsx'
 import LeaderboardPodium from './LeaderboardPodium.jsx'
 import LeaderboardTable from './LeaderboardTable.jsx'
+import Tooltip from '../ui/Tooltip.jsx'
+import { useI18n } from '../../i18n/I18nProvider.jsx'
 
-export default function Leaderboard({ data = mockData, entranceReady = true }) {
-  const [search, setSearch] = useState('')
-  const [gameId, setGameId] = useState(String(data.games[0]?.id ?? ''))
-  const years = [...new Set(data.matches.map((match) => match.registeredAt.slice(0, 4)))].sort().reverse()
-  const [year, setYear] = useState(years[0] ?? String(new Date().getFullYear()))
+export default function Leaderboard({ data, entranceReady = true, entranceFinished = false, onEntranceComplete }) {
+  const { t, locale } = useI18n()
   const [tableExpanded, setTableExpanded] = useState(false)
+  const [tableMotion, setTableMotion] = useState('idle')
+  const [nameQuery, setNameQuery] = useState('')
+  const [sort, setSort] = useState({ key: 'position', direction: 'asc' })
   const [podiumHeight, setPodiumHeight] = useState(null)
   const podiumRef = useRef(null)
   const reducedMotion = useReducedMotion()
@@ -31,12 +30,18 @@ export default function Leaderboard({ data = mockData, entranceReady = true }) {
     return () => observer.disconnect()
   }, [])
 
-  const rankedPlayers = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase('it-IT')
-    return buildLeaderboard(data, gameId, year)
-      .map((player, index) => ({ ...player, position: index + 1 }))
-      .filter((player) => player.name.toLocaleLowerCase('it-IT').includes(query))
-  }, [data, gameId, year, search])
+  const rankedPlayers = useMemo(() => buildLeaderboard(data), [data])
+  const tablePlayers = useMemo(() => selectLeaderboardPlayers(rankedPlayers, nameQuery, sort, locale), [rankedPlayers, nameQuery, sort, locale])
+  const showMedalRows = tableExpanded || Boolean(nameQuery.trim())
+
+  const toggleSort = (key) => setSort((current) => current.key === key
+    ? { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
+    : { key, direction: key === 'position' || key === 'name' ? 'asc' : 'desc' })
+
+  const toggleTable = () => {
+    setTableMotion(tableExpanded ? 'closing' : 'opening')
+    setTableExpanded(!tableExpanded)
+  }
 
   return (
     <div className={cn(
@@ -54,37 +59,30 @@ export default function Leaderboard({ data = mockData, entranceReady = true }) {
           podiumRef={podiumRef}
           expanded={tableExpanded}
           entranceReady={entranceReady}
+          entranceFinished={entranceFinished}
+          onEntranceComplete={onEntranceComplete}
           players={rankedPlayers.filter((player) => player.position <= 3)}
         />
       </div>
-      <NeonCard as="section" tone="cyan" tilt={0.4} float={0.6} duration={6.8} className="leaderboard-results flex min-h-0 flex-1 flex-col overflow-hidden p-4 sm:p-5" aria-label="Classifica giocatori">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="m-0 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">Risultati</h3>
-          <NeonButton
-            variant="subtle"
-            className="h-9 min-h-9 w-9 shrink-0 p-0"
-            type="button"
-            aria-label={tableExpanded ? 'Riduci tabella' : 'Espandi tabella'}
-            aria-pressed={tableExpanded}
-            aria-controls="leaderboard-table"
-            title={tableExpanded ? 'Riduci tabella' : 'Espandi tabella'}
-            onClick={() => setTableExpanded((expanded) => !expanded)}
-          >
-            {tableExpanded ? <Minimize2 size={17} aria-hidden="true" /> : <Maximize2 size={17} aria-hidden="true" />}
-          </NeonButton>
+      <section className="leaderboard-results neon-surface relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyber-cyan/45 p-4 shadow-neon-cyan sm:p-5" aria-label={t('leaderboard.aria')}>
+        <div className="mb-3 flex flex-wrap items-center gap-3">
+          <h3 className="m-0 mr-auto text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">{t('leaderboard.results')}</h3>
+          <Tooltip content={t(tableExpanded ? 'leaderboard.collapse' : 'leaderboard.expand')}>
+            <NeonButton
+              variant="subtle"
+              className="h-9 min-h-9 w-9 shrink-0 p-0"
+              type="button"
+              aria-label={t(tableExpanded ? 'leaderboard.collapse' : 'leaderboard.expand')}
+              aria-pressed={tableExpanded}
+              aria-controls="leaderboard-table"
+              onClick={toggleTable}
+            >
+              {tableExpanded ? <Minimize2 size={17} aria-hidden="true" /> : <Maximize2 size={17} aria-hidden="true" />}
+            </NeonButton>
+          </Tooltip>
         </div>
-        <LeaderboardFilters
-          search={search}
-          onSearchChange={setSearch}
-          gameId={gameId}
-          onGameChange={setGameId}
-          games={data.games}
-          year={year}
-          onYearChange={setYear}
-          years={years}
-        />
-        <LeaderboardTable players={rankedPlayers} expanded={tableExpanded} hasPodium={!tableExpanded && rankedPlayers.some((player) => player.position <= 3)} />
-      </NeonCard>
+        <LeaderboardTable players={tablePlayers} expanded={showMedalRows} motion={tableMotion} sort={sort} onSort={toggleSort} nameQuery={nameQuery} onNameSearch={setNameQuery} hasPodium={!showMedalRows && rankedPlayers.some((player) => player.position <= 3)} />
+      </section>
     </div>
   )
 }

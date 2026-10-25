@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
 import { useFloatingTilt } from '../../hooks/useFloatingTilt.js'
+import ScoreCards from '../ui/ScoreCards.jsx'
+import { useI18n } from '../../i18n/I18nProvider.jsx'
 
 export default function MatchHistoryTable({ matches }) {
+  const { t, locale } = useI18n()
   const floating = useFloatingTilt({ tilt: 0.5, float: 0.8, duration: 6.4 })
 
   return (
@@ -13,14 +16,12 @@ export default function MatchHistoryTable({ matches }) {
       onPointerMove={floating.onPointerMove}
       onPointerLeave={floating.onPointerLeave}
     >
-      <table className="history-table w-full min-w-[760px] border-collapse text-left text-sm">
+      <table className="history-table w-full min-w-[480px] border-collapse text-center text-sm">
         <thead className="sticky top-0 z-10 bg-cyber-surface/90 text-[10px] uppercase tracking-[0.15em] text-cyber-muted backdrop-blur-xl">
           <tr>
-            <th className="px-4 py-3 font-medium" scope="col">Data</th>
-            <th className="px-4 py-3 font-medium" scope="col">Gioco</th>
-            <th className="px-4 py-3 font-medium" scope="col">Registrata da</th>
-            <th className="px-4 py-3 font-medium" scope="col">Vincitori</th>
-            <th className="px-4 py-3 font-medium" scope="col">Punteggio</th>
+            <th className="px-4 py-3 text-center font-medium" scope="col">{t('history.date')}</th>
+            <th className="px-4 py-3 text-center font-medium" scope="col">{t('history.winner')}</th>
+            <th className="px-4 py-3 text-center font-medium" scope="col">{t('history.scores')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/[0.05]">
@@ -30,19 +31,15 @@ export default function MatchHistoryTable({ matches }) {
               className="transition-colors hover:bg-cyber-purple/[0.045]"
             >
               <td className="whitespace-nowrap px-4 py-3.5 text-xs tabular-nums text-cyber-muted">
-                <time dateTime={match.registeredAt}>{new Date(match.registeredAt).toLocaleDateString('it-IT')}</time>
+                <time dateTime={match.date}>{new Date(match.date).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}</time>
               </td>
-              <td className="px-4 py-3.5 font-medium text-cyber-text">{match.gameName}</td>
-              <td className="px-4 py-3.5 text-cyber-muted">{match.callerName}</td>
-              <td className="px-4 py-3.5 text-green-200">{match.winnerNames.join(', ')}</td>
-              <td className="px-4 py-3.5 text-xs text-cyber-muted">
-                {match.results.map((result) => `${result.playerName}: ${result.score}`).join(' · ') || '—'}
-              </td>
+              <td className="px-4 py-3.5 text-green-200">{match.winnerName}</td>
+              <td className="px-4 py-3.5 text-xs tabular-nums text-cyber-muted"><ScoreCards scores={match.winnerScores} /></td>
             </tr>
           )) : (
             <tr>
-              <td className="history-empty px-4 py-12 text-center text-sm text-cyber-muted" colSpan="5">
-                Nessun match trovato con questi filtri
+              <td className="history-empty px-4 py-12 text-center text-sm text-cyber-muted" colSpan="3">
+                {t('history.noMatches')}
               </td>
             </tr>
           )}

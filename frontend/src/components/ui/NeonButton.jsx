@@ -8,21 +8,22 @@ const variants = {
   ghost: 'border-transparent bg-transparent text-cyber-muted hover:border-cyber-purple/40 hover:bg-cyber-purple/[0.08] hover:text-cyber-text',
 }
 
-export default function NeonButton({ variant = 'subtle', className, children, style, onPointerMove, onPointerLeave, ...props }) {
-  const floating = useFloatingTilt({ tilt: 7, float: 2, duration: 4.4 })
+export default function NeonButton({ variant = 'subtle', motionEnabled = true, className, children, style, onPointerMove, onPointerLeave, ...props }) {
+  const floating = useFloatingTilt({ tilt: motionEnabled ? 7 : 0, float: motionEnabled ? 2 : 0, duration: 4.4 })
 
   return (
     <motion.button
       className={cn(
-        'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-cyan/70 disabled:opacity-50 transform-gpu',
+        'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-cyan/70 disabled:opacity-50',
+        motionEnabled && 'transform-gpu',
         variants[variant] ?? variants.subtle,
         className,
       )}
-      style={{ ...floating.style, ...style }}
-      animate={floating.animate}
-      transition={floating.transition}
-      onPointerMove={(event) => { floating.onPointerMove(event); onPointerMove?.(event) }}
-      onPointerLeave={(event) => { floating.onPointerLeave(); onPointerLeave?.(event) }}
+      style={{ ...(motionEnabled ? floating.style : {}), ...style }}
+      animate={motionEnabled ? floating.animate : undefined}
+      transition={motionEnabled ? floating.transition : undefined}
+      onPointerMove={(event) => { if (motionEnabled) floating.onPointerMove(event); onPointerMove?.(event) }}
+      onPointerLeave={(event) => { if (motionEnabled) floating.onPointerLeave(); onPointerLeave?.(event) }}
       whileTap={{ scale: 0.98 }}
       {...props}
     >

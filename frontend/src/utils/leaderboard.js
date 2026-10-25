@@ -1,26 +1,33 @@
-export function buildLeaderboard(data, gameId, year) {
-  const players = new Map(data.players.map((player) => [player.id, player]))
-  const wins = new Map()
+export function buildLeaderboard(data) {
+  return [...data.players]
+    .map((player) => ({ ...player, fullName: `${player.name} ${player.surname}` }))
+    .sort((first, second) => second.wins - first.wins || second.bestScore - first.bestScore || first.id - second.id)
+    .map((player, index) => ({ ...player, position: index + 1 }))
+}
 
-  data.matches.forEach((match) => {
-    if (match.gameId !== Number(gameId) || !match.registeredAt.startsWith(String(year))) return
+const sortableValues = {
+  position: (player) => player.position,
+  name: (player) => player.fullName,
+  wins: (player) => player.wins,
+  winStreak: (player) => player.winStreak,
+  bestScore: (player) => player.bestScore,
+}
 
-    match.winnerIds.forEach((playerId) => {
-      const player = players.get(playerId)
-      if (!player) return
+const searchable = (value) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLocaleLowerCase()
 
-      const entry = wins.get(playerId) ?? {
-        id: playerId,
-        name: `${player.name} ${player.surname}`,
-        wins: 0,
-        lastWinAt: match.registeredAt,
-      }
-      entry.wins += 1
-      if (match.registeredAt > entry.lastWinAt) entry.lastWinAt = match.registeredAt
-      wins.set(playerId, entry)
+export function selectLeaderboardPlayers(players, query, sort, locale = 'en') {
+  const search = searchable(query.trim())
+  const getValue = sortableValues[sort.key] ?? sortableValues.position
+  const direction = sort.direction === 'desc' ? -1 : 1
+
+  return players
+    .filter((player) => !search || searchable(player.fullName).includes(search))
+    .sort((first, second) => {
+      const firstValue = getValue(first)
+      const secondValue = getValue(second)
+      const order = typeof firstValue === 'string'
+        ? firstValue.localeCompare(secondValue, locale, { sensitivity: 'base' })
+        : firstValue - secondValue
+      return order * direction || first.position - second.position
     })
-  })
-
-  return [...wins.values()].sort((first, second) =>
-    second.wins - first.wins || first.name.localeCompare(second.name, 'it-IT'))
 }

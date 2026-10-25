@@ -1,8 +1,8 @@
 export const PERIOD_OPTIONS = [
-  { value: 'all', label: 'Tutti i tempi' },
-  { value: 'year', label: 'Ultimo anno' },
-  { value: 'sixMonths', label: 'Ultimi 6 mesi' },
-  { value: 'month', label: 'Ultimi 30 giorni' },
+  { value: 'all', labelKey: 'history.allTime' },
+  { value: 'year', labelKey: 'history.lastYear' },
+  { value: 'sixMonths', labelKey: 'history.lastSixMonths' },
+  { value: 'month', labelKey: 'history.lastThirtyDays' },
 ]
 
 export function getPeriodStart(period) {

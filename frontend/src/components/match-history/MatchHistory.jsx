@@ -1,53 +1,43 @@
 import { useMemo, useState } from 'react'
-import mockData from '../../data/mockData.json'
 import { buildMatchHistoryRows } from '../../utils/matchHistory.js'
 import { getPeriodStart } from '../../utils/datePeriods.js'
+import AddMatchForm from './AddMatchForm.jsx'
 import MatchHistoryFilters from './MatchHistoryFilters.jsx'
 import MatchHistoryTable from './MatchHistoryTable.jsx'
+import { useI18n } from '../../i18n/I18nProvider.jsx'
 
-const defaultMatches = buildMatchHistoryRows(mockData)
-
-export default function MatchHistory({ matches = defaultMatches, games = mockData.games }) {
-  const [search, setSearch] = useState('')
-  const [gameId, setGameId] = useState('all')
+export default function MatchHistory({ data, onAddMatch }) {
+  const { t } = useI18n()
   const [period, setPeriod] = useState('all')
   const [sortDirection, setSortDirection] = useState('desc')
 
   const filteredMatches = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase('it-IT')
     const periodStart = getPeriodStart(period)
 
-    return matches
+    return buildMatchHistoryRows(data, t('history.unknownPlayer'))
       .filter((match) => {
-        const matchDate = new Date(match.registeredAt)
-        const playerNames = [match.callerName, ...match.winnerNames, ...match.results.map((result) => result.playerName)].join(' ').toLocaleLowerCase('it-IT')
-        const matchesPlayer = !query || playerNames.includes(query)
-        const matchesGame = gameId === 'all' || String(match.gameId) === gameId
+        const matchDate = new Date(match.date)
         const matchesPeriod = !periodStart || matchDate >= periodStart
 
-        return matchesPlayer && matchesGame && matchesPeriod
+        return matchesPeriod
       })
       .sort((first, second) => {
         const dateOrder = sortDirection === 'desc'
-          ? second.registeredAt.localeCompare(first.registeredAt)
-          : first.registeredAt.localeCompare(second.registeredAt)
+          ? second.date.localeCompare(first.date)
+          : first.date.localeCompare(second.date)
 
         return dateOrder || second.id - first.id
       })
-  }, [gameId, matches, period, search, sortDirection])
+  }, [data, period, sortDirection, t])
 
   return (
-    <div className="match-history grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-visible">
+    <div className="match-history grid min-h-0 grid-rows-[auto_auto_minmax(0,1fr)] gap-4 overflow-visible">
+      <AddMatchForm players={data.players} onAddMatch={onAddMatch} />
       <MatchHistoryFilters
-        search={search}
-        onSearchChange={setSearch}
-        gameId={gameId}
-        onGameChange={setGameId}
         period={period}
         onPeriodChange={setPeriod}
         sortDirection={sortDirection}
         onSortToggle={() => setSortDirection((direction) => direction === 'desc' ? 'asc' : 'desc')}
-        games={games}
       />
       <MatchHistoryTable matches={filteredMatches} />
     </div>

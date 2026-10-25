@@ -1,6 +1,7 @@
 import { useReducedMotion, useSpring } from 'framer-motion'
 
 const spring = { stiffness: 180, damping: 22, mass: 0.5 }
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
 export function useFloatingTilt({ tilt = 5, float = 3, duration = 5 } = {}) {
   const reducedMotion = useReducedMotion()
@@ -11,8 +12,10 @@ export function useFloatingTilt({ tilt = 5, float = 3, duration = 5 } = {}) {
     if (reducedMotion || event.pointerType !== 'mouse') return
 
     const bounds = event.currentTarget.getBoundingClientRect()
-    const horizontal = (event.clientX - bounds.left) / bounds.width - 0.5
-    const vertical = (event.clientY - bounds.top) / bounds.height - 0.5
+    if (bounds.width < 1 || bounds.height < 1) return
+
+    const horizontal = clamp((event.clientX - bounds.left) / bounds.width - 0.5, -0.5, 0.5)
+    const vertical = clamp((event.clientY - bounds.top) / bounds.height - 0.5, -0.5, 0.5)
 
     rotateX.set(-vertical * tilt * 2)
     rotateY.set(horizontal * tilt * 2)
@@ -30,8 +33,8 @@ export function useFloatingTilt({ tilt = 5, float = 3, duration = 5 } = {}) {
       transformPerspective: 1000,
       transformStyle: 'preserve-3d',
     },
-    animate: reducedMotion ? undefined : { y: [0, -float, 0] },
-    transition: reducedMotion ? undefined : {
+    animate: reducedMotion || float <= 0 ? undefined : { y: [0, -float, 0] },
+    transition: reducedMotion || float <= 0 ? undefined : {
       y: { duration, ease: 'easeInOut', repeat: Infinity },
     },
     onPointerMove,

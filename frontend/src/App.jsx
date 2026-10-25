@@ -1,26 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { AppNavbar, AppSidebar } from './components/layout/index.js'
 import OpeningVideo from './components/layout/OpeningVideo.jsx'
+import SettingsDialog from './components/layout/SettingsDialog.jsx'
 import LeaderboardPage from './pages/leaderboard/LeaderboardPage.jsx'
 import MatchHistoryPage from './pages/match-history/MatchHistoryPage.jsx'
-import { cn } from './lib/utils.ts'
+import { addMatch, loadMatchData, saveMatchData } from './data/matchStore.js'
+import { playButtonClick, playPageChange, unlockEffectsAudio } from './utils/uiSounds.js'
+import { useAudioSettings } from './hooks/useAudioSettings.js'
+import { useI18n } from './i18n/I18nProvider.jsx'
 
 export default function App() {
   const [sidebarMode, setSidebarMode] = useState('closed')
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('leaderboard')
+  const [matchData, setMatchData] = useState(loadMatchData)
   const [showOpeningVideo, setShowOpeningVideo] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
+  const [openingVideoExited, setOpeningVideoExited] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  const audio = useAudioSettings(openingVideoExited)
+  const { saveLanguage, discardLanguage } = useI18n()
   const [podiumEntranceReady, setPodiumEntranceReady] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  const [podiumEntranceFinished, setPodiumEntranceFinished] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
   const [showBackgroundVideo, setShowBackgroundVideo] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
+  const backgroundVideoRef = useRef(null)
+  const [backgroundVideoPlaying, setBackgroundVideoPlaying] = useState(false)
   const sidebarOpen = sidebarMode === 'hover' || sidebarMode === 'pinned'
 
   useEffect(() => {
+    unlockEffectsAudio()
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
     const updateVideo = () => {
       setShowBackgroundVideo(!motionPreference.matches)
@@ -29,6 +46,35 @@ export default function App() {
     motionPreference.addEventListener('change', updateVideo)
     return () => motionPreference.removeEventListener('change', updateVideo)
   }, [])
+
+  useEffect(() => {
+    const unlock = () => unlockEffectsAudio()
+    const playButtonSound = (event) => {
+      const button = event.target.closest?.('button')
+      if (!button || button.disabled) return
+      if (button.dataset.sound === 'page') playPageChange()
+      else playButtonClick()
+    }
+    document.addEventListener('pointerdown', unlock, true)
+    document.addEventListener('keydown', unlock, true)
+    document.addEventListener('click', playButtonSound, true)
+    return () => {
+      document.removeEventListener('pointerdown', unlock, true)
+      document.removeEventListener('keydown', unlock, true)
+      document.removeEventListener('click', playButtonSound, true)
+    }
+  }, [])
+
+  useEffect(() => {
+    const video = backgroundVideoRef.current
+    if (!video) return
+    if (showBackgroundVideo && openingVideoExited && podiumEntranceFinished) {
+      video.play().catch(() => setBackgroundVideoPlaying(false))
+    } else {
+      video.pause()
+      setBackgroundVideoPlaying(false)
+    }
+  }, [showBackgroundVideo, openingVideoExited, podiumEntranceFinished])
 
   const handleSidebarPointerEnter = () => {
     setSidebarMode((mode) => mode === 'closed' ? 'hover' : mode)
@@ -44,22 +90,47 @@ export default function App() {
 
   const navigateTo = (page) => {
     setCurrentPage(page)
+    if (page !== 'leaderboard') setPodiumEntranceFinished(true)
     setSidebarMode('dismissed')
   }
 
   const openSidebar = () => setSidebarMode('pinned')
 
+  const handleAddMatch = (winnerId, winnerScores) => {
+    const nextData = addMatch(matchData, winnerId, winnerScores)
+    setMatchData(nextData)
+    saveMatchData(nextData)
+  }
+
   return (
-    <div className="app-shell relative grid h-dvh min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-cyber-bg text-cyber-text">
+    <div
+      className="app-shell relative grid h-dvh min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-cyber-bg text-cyber-text"
+      data-sidebar-open={sidebarOpen}
+      onCopyCapture={(event) => event.preventDefault()}
+      onCutCapture={(event) => event.preventDefault()}
+      onDragStartCapture={(event) => event.preventDefault()}
+    >
+      <audio
+        ref={audio.musicRef}
+        src="/assets/audio/aura-background.mp3"
+        preload="auto"
+        loop
+        aria-hidden="true"
+      />
       {showBackgroundVideo && (
         <video
           className="app-background-video"
-          src="/videos/background-loop.mp4"
-          autoPlay
+          data-playing={backgroundVideoPlaying}
+          ref={backgroundVideoRef}
+          src="/videos/background-loop-optimized.mp4"
+          poster="/videos/background-poster.jpg"
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          onPlaying={() => setBackgroundVideoPlaying(true)}
+          onPause={() => setBackgroundVideoPlaying(false)}
+          onWaiting={() => setBackgroundVideoPlaying(false)}
           disablePictureInPicture
           disableRemotePlayback
           aria-hidden="true"
@@ -67,28 +138,42 @@ export default function App() {
         />
       )}
       <AppNavbar sidebarOpen={sidebarOpen} onSidebarToggle={toggleSidebar} />
-      <div
-        data-sidebar-open={sidebarOpen}
-        className={cn(
-          'workspace-layout grid min-h-0 min-w-0 overflow-hidden transition-[grid-template-columns] duration-300 ease-[cubic-bezier(0.22,0.61,0.36,1)]',
-          sidebarOpen
-            ? 'grid-cols-[var(--sidebar-expanded-width)_minmax(0,1fr)]'
-            : 'grid-cols-[var(--sidebar-rail-width)_minmax(0,1fr)]',
-        )}
-      >
+      <div className="workspace-layout grid min-h-0 min-w-0 overflow-hidden">
         <AppSidebar
           sidebarOpen={sidebarOpen}
           currentPage={currentPage}
           onNavigate={navigateTo}
+          onSettingsOpen={() => setSettingsOpen(true)}
           onSidebarOpen={openSidebar}
           onPointerEnter={handleSidebarPointerEnter}
           onPointerLeave={handleSidebarPointerLeave}
         />
+        <span className="layout-inner-curve" aria-hidden="true" />
         <main className="page-container relative min-h-0 min-w-0 overflow-hidden">
-          {currentPage === 'leaderboard' ? <LeaderboardPage entranceReady={podiumEntranceReady} /> : <MatchHistoryPage />}
+          {currentPage === 'leaderboard'
+            ? <LeaderboardPage entranceReady={podiumEntranceReady} entranceFinished={podiumEntranceFinished} onEntranceComplete={() => setPodiumEntranceFinished(true)} data={matchData} />
+            : <MatchHistoryPage data={matchData} onAddMatch={handleAddMatch} />}
         </main>
       </div>
-      <AnimatePresence initial={false}>
+      <SettingsDialog
+        open={settingsOpen}
+        onClose={() => {
+          audio.discardSettings()
+          discardLanguage()
+          setSettingsOpen(false)
+        }}
+        onSave={() => {
+          audio.saveSettings()
+          saveLanguage()
+          setSettingsOpen(false)
+        }}
+        effectsVolume={audio.settings.effectsVolume}
+        onEffectsVolumeChange={audio.changeEffectsVolume}
+        musicVolume={audio.settings.musicVolume}
+        onMusicVolumeChange={audio.changeMusicVolume}
+        onRestoreDefaults={audio.restoreDefaults}
+      />
+      <AnimatePresence initial={false} onExitComplete={() => setOpeningVideoExited(true)}>
         {showOpeningVideo && <OpeningVideo onFinish={() => {
           setPodiumEntranceReady(true)
           setShowOpeningVideo(false)
