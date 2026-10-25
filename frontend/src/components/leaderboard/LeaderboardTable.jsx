@@ -4,6 +4,7 @@ import NeonBadge from '../ui/NeonBadge.jsx'
 import Tooltip from '../ui/Tooltip.jsx'
 import NameFilterPopover from './NameFilterPopover.jsx'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
+import { playMedalWhoosh } from '../../utils/uiSounds.js'
 
 const columns = [
   { key: 'position', label: 'leaderboard.position' },
@@ -13,7 +14,7 @@ const columns = [
   { key: 'bestScore', label: 'leaderboard.best' },
 ]
 
-export default function LeaderboardTable({ players, expanded, motion, sort, onSort, nameQuery, onNameSearch, hasPodium }) {
+export default function LeaderboardTable({ players, expanded, motion, exitedRanks, onMedalRowExit, onMedalRowsGone, sort, onSort, nameQuery, onNameSearch, hasPodium }) {
   const { t, locale } = useI18n()
   const [filterOpen, setFilterOpen] = useState(false)
   const filterButtonRef = useRef(null)
@@ -74,11 +75,23 @@ export default function LeaderboardTable({ players, expanded, motion, sort, onSo
             <tr
               key={player.id}
               data-rank={player.position <= 3 ? player.position : undefined}
+              data-exited={exitedRanks.includes(player.position) || undefined}
               aria-hidden={!expanded && motion !== 'closing' && player.position <= 3}
               className="leaderboard-data-row transition-colors hover:bg-cyber-cyan/[0.045]"
             >
               <td>
-                <div className="leaderboard-cell px-4 font-mono text-xs text-cyber-muted">{String(player.position).padStart(2, '0')}</div>
+                <div
+                  className="leaderboard-cell px-4 font-mono text-xs text-cyber-muted"
+                  onAnimationStart={(event) => {
+                    if (event.target === event.currentTarget && event.animationName === 'leaderboard-medal-enter' && motion === 'opening' && player.position <= 3) playMedalWhoosh(player.position)
+                  }}
+                  onAnimationEnd={(event) => {
+                    if (event.target === event.currentTarget && event.animationName === 'leaderboard-medal-leave' && motion === 'closing' && player.position <= 3) onMedalRowExit(player.position)
+                  }}
+                  onTransitionEnd={(event) => {
+                    if (event.target === event.currentTarget && event.propertyName === 'height' && motion === 'closing' && player.position === 1 && exitedRanks.includes(1)) onMedalRowsGone()
+                  }}
+                >{String(player.position).padStart(2, '0')}</div>
               </td>
               <td>
                 <div className="leaderboard-cell leaderboard-player-cell px-4 font-medium text-cyber-text">

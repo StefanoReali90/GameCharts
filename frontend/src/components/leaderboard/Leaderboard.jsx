@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Maximize2, Minimize2 } from 'lucide-react'
 import { useReducedMotion } from 'framer-motion'
 import { buildLeaderboard, selectLeaderboardPlayers } from '../../utils/leaderboard.js'
@@ -14,6 +14,7 @@ export default function Leaderboard({ data, entranceReady = true, entranceFinish
   const [tableExpanded, setTableExpanded] = useState(false)
   const [layoutExpanded, setLayoutExpanded] = useState(false)
   const [tableMotion, setTableMotion] = useState('idle')
+  const [exitedRanks, setExitedRanks] = useState([])
   const [nameQuery, setNameQuery] = useState('')
   const [sort, setSort] = useState({ key: 'position', direction: 'asc' })
   const [podiumHeight, setPodiumHeight] = useState(null)
@@ -42,18 +43,24 @@ export default function Leaderboard({ data, entranceReady = true, entranceFinish
     ? { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
     : { key, direction: key === 'position' || key === 'name' ? 'asc' : 'desc' })
 
+  const completeClose = useCallback(() => {
+    window.clearTimeout(closeTimer.current)
+    closeTimer.current = null
+    setTableMotion('idle')
+    setLayoutExpanded(false)
+    setExitedRanks([])
+  }, [])
+
   const toggleTable = () => {
     window.clearTimeout(closeTimer.current)
     if (tableExpanded) {
+      setExitedRanks([])
       setTableMotion('closing')
       setTableExpanded(false)
-      const completeClose = () => {
-        setTableMotion('idle')
-        setLayoutExpanded(false)
-      }
       if (reducedMotion) completeClose()
-      else closeTimer.current = window.setTimeout(completeClose, 1250)
+      else closeTimer.current = window.setTimeout(completeClose, 1800)
     } else {
+      setExitedRanks([])
       setLayoutExpanded(true)
       setTableMotion('opening')
       setTableExpanded(true)
@@ -98,7 +105,19 @@ export default function Leaderboard({ data, entranceReady = true, entranceFinish
             </NeonButton>
           </Tooltip>
         </div>
-        <LeaderboardTable players={tablePlayers} expanded={showMedalRows} motion={tableMotion} sort={sort} onSort={toggleSort} nameQuery={nameQuery} onNameSearch={setNameQuery} hasPodium={!showMedalRows && rankedPlayers.some((player) => player.position <= 3)} />
+        <LeaderboardTable
+          players={tablePlayers}
+          expanded={showMedalRows}
+          motion={tableMotion}
+          exitedRanks={exitedRanks}
+          onMedalRowExit={(rank) => setExitedRanks((ranks) => ranks.includes(rank) ? ranks : [...ranks, rank])}
+          onMedalRowsGone={completeClose}
+          sort={sort}
+          onSort={toggleSort}
+          nameQuery={nameQuery}
+          onNameSearch={setNameQuery}
+          hasPodium={!showMedalRows && rankedPlayers.some((player) => player.position <= 3)}
+        />
       </section>
     </div>
   )

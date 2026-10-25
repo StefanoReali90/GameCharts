@@ -48,23 +48,36 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const unlock = () => unlockEffectsAudio()
-    const playInteractionSound = (event) => {
-      const target = event.target
-      if (!target.closest?.('.app-shell, .leaderboard-name-filter-popover')) return
-      const button = target.closest('button')
-      if (button?.disabled || target.closest('[aria-disabled="true"]')) return
-      if (target.closest('label') && !target.closest('input, select, textarea')) return
+    let lastPointerButton = null
+    let lastPointerTime = 0
+    const playButtonSound = (button) => {
+      if (!button || button.disabled || button.closest('[aria-disabled="true"]')) return
       playButtonClick()
       if (button?.dataset.sound === 'page') playPageChange()
     }
-    document.addEventListener('pointerdown', unlock, true)
-    document.addEventListener('keydown', unlock, true)
-    document.addEventListener('click', playInteractionSound, true)
+    const onPointerDown = (event) => {
+      unlockEffectsAudio()
+      if (event.button !== 0) return
+      const button = event.target.closest?.('button')
+      if (!button) return
+      lastPointerButton = button
+      lastPointerTime = performance.now()
+      playButtonSound(button)
+    }
+    const onClick = (event) => {
+      const button = event.target.closest?.('button')
+      if (!button || event.detail !== 0) return
+      if (button === lastPointerButton && performance.now() - lastPointerTime < 500) return
+      unlockEffectsAudio()
+      playButtonSound(button)
+    }
+    document.addEventListener('pointerdown', onPointerDown, true)
+    document.addEventListener('keydown', unlockEffectsAudio, true)
+    document.addEventListener('click', onClick, true)
     return () => {
-      document.removeEventListener('pointerdown', unlock, true)
-      document.removeEventListener('keydown', unlock, true)
-      document.removeEventListener('click', playInteractionSound, true)
+      document.removeEventListener('pointerdown', onPointerDown, true)
+      document.removeEventListener('keydown', unlockEffectsAudio, true)
+      document.removeEventListener('click', onClick, true)
     }
   }, [])
 

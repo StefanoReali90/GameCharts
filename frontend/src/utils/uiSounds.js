@@ -134,8 +134,57 @@ export function playButtonClick() {
   if (effectsVolume === 0) return
   withAudio((context) => {
     const start = context.currentTime
-    bell(context, 659.25, start, 0.095, 0.035 * effectsVolume)
-    bell(context, 880, start + 0.035, 0.12, 0.022 * effectsVolume)
+    bell(context, 659.25, start, 0.095, 0.075 * effectsVolume)
+    bell(context, 880, start + 0.035, 0.12, 0.046 * effectsVolume)
+  })
+}
+
+export function playCrystalTap(rank) {
+  if (effectsVolume === 0) return
+  withAudio((context) => {
+    const start = context.currentTime
+    const root = [1046.5, 987.77, 783.99][rank - 1] ?? 1046.5
+    for (const [partial, level, duration] of [[1, 1, 0.58], [2.41, 0.24, 0.37], [4.07, 0.08, 0.22]]) {
+      const oscillator = context.createOscillator()
+      const gain = context.createGain()
+      oscillator.type = 'sine'
+      oscillator.frequency.setValueAtTime(root * partial * 1.012, start)
+      oscillator.frequency.exponentialRampToValueAtTime(root * partial, start + 0.08)
+      gain.gain.setValueAtTime(0.0001, start)
+      gain.gain.exponentialRampToValueAtTime(0.065 * level * effectsVolume, start + 0.009)
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
+      oscillator.connect(gain).connect(context.destination)
+      oscillator.start(start)
+      oscillator.stop(start + duration + 0.01)
+      oscillator.onended = () => { oscillator.disconnect(); gain.disconnect() }
+    }
+  })
+}
+
+export function playMedalWhoosh(rank) {
+  if (effectsVolume === 0 || rank < 1 || rank > 3) return
+  withAudio((context) => {
+    const start = context.currentTime
+    const duration = 0.23
+    const buffer = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate)
+    const samples = buffer.getChannelData(0)
+    for (let index = 0; index < samples.length; index += 1) samples[index] = Math.random() * 2 - 1
+    const source = context.createBufferSource()
+    const filter = context.createBiquadFilter()
+    const gain = context.createGain()
+    const pitch = [1.35, 1.1, 0.9][rank - 1]
+    source.buffer = buffer
+    filter.type = 'bandpass'
+    filter.Q.value = 0.65
+    filter.frequency.setValueAtTime(850 * pitch, start)
+    filter.frequency.exponentialRampToValueAtTime(2800 * pitch, start + duration)
+    gain.gain.setValueAtTime(0.0001, start)
+    gain.gain.exponentialRampToValueAtTime(0.075 * effectsVolume, start + 0.045)
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
+    source.connect(filter).connect(gain).connect(context.destination)
+    source.start(start)
+    source.stop(start + duration)
+    source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect() }
   })
 }
 

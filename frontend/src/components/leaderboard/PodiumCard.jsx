@@ -1,6 +1,7 @@
 import NeonCard from '../ui/NeonCard.jsx'
 import PlayerAvatar from './PlayerAvatar.jsx'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
+import { playCrystalTap } from '../../utils/uiSounds.js'
 
 export default function PodiumCard({ player, label, tone, rank, impactActive = false, floatingEnabled = true, className }) {
   const { t, locale } = useI18n()
@@ -11,6 +12,7 @@ export default function PodiumCard({ player, label, tone, rank, impactActive = f
       tilt={4}
       float={floatingEnabled ? 4 : 0}
       duration={4.6 + rank * 0.4}
+      onPointerDown={(event) => { if (event.button === 0) playCrystalTap(rank) }}
       className={`podium-card podium-card--${tone}${impactActive ? ' podium-card--impact' : ''} flex w-full flex-col items-center justify-center gap-1 overflow-hidden px-2 py-2.5 text-center sm:px-3 ${className}`}
       aria-label={player ? `${label}: ${player.fullName}, ${player.wins.toLocaleString(locale)} ${t(player.wins === 1 ? 'leaderboard.winOne' : 'leaderboard.winMany')}` : `${label}: ${t('leaderboard.waiting')}`}
     >
