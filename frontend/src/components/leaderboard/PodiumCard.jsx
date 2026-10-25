@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
+import { Award } from 'lucide-react'
 import NeonCard from '../ui/NeonCard.jsx'
 import PlayerAvatar from './PlayerAvatar.jsx'
 import StreakFlame from './StreakFlame.jsx'
@@ -54,9 +55,9 @@ export default function PodiumCard({ player, label, tone, rank, impactActive = f
             <AnimatedWinCount wins={player.wins} active={impactActive} locale={locale} t={t} />
           </p>
           <div className="grid gap-0.5 text-[11px] leading-tight text-cyber-muted">
-            <p className="m-0">{t('leaderboard.streakColumn')}: <StreakFlame count={player.winStreak} /></p>
-            <p className="m-0">{t('leaderboard.bestStreak')}: <span className="tabular-nums">{player.bestWinStreak}</span></p>
-            <p className="m-0 flex items-center justify-center gap-1.5">{t('leaderboard.best')}: <ScoreCards score={player.bestScore} /></p>
+            <p className="podium-stat m-0" role="group" aria-label={`${t('leaderboard.streakColumn')}: ${player.winStreak}`}><span className="podium-stat-label">{t('leaderboard.streakColumn')}:</span> <StreakFlame count={player.winStreak} /></p>
+            <p className="podium-stat m-0" role="group" aria-label={`${t('leaderboard.bestStreak')}: ${player.bestWinStreak}`}><span className="podium-stat-label">{t('leaderboard.bestStreak')}:</span><Award className="podium-stat-icon" size={12} aria-hidden="true" /> <span className="tabular-nums">{player.bestWinStreak}</span></p>
+            <p className="podium-stat m-0" role="group" aria-label={t('leaderboard.best')}><span className="podium-stat-label">{t('leaderboard.best')}:</span> <ScoreCards score={player.bestScore} /></p>
           </div>
         </>
       ) : (

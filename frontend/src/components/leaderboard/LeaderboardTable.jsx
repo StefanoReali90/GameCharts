@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, ArrowUpDown, Search } from 'lucide-react'
+import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, ArrowUpDown, Award, Flame, Hash, Layers3, Search, Trophy, UserRound } from 'lucide-react'
 import NeonBadge from '../ui/NeonBadge.jsx'
 import ScoreCards from '../ui/ScoreCards.jsx'
 import StreakFlame from './StreakFlame.jsx'
@@ -10,12 +10,12 @@ import { playMedalWhoosh } from '../../utils/uiSounds.js'
 import { positionChange } from '../../data/rankingSnapshot.js'
 
 const columns = [
-  { key: 'position', label: 'leaderboard.position' },
-  { key: 'name', label: 'leaderboard.player' },
-  { key: 'wins', label: 'leaderboard.winsColumn' },
-  { key: 'bestWinStreak', label: 'leaderboard.bestStreak' },
-  { key: 'winStreak', label: 'leaderboard.streakColumn' },
-  { key: 'bestScore', label: 'leaderboard.best' },
+  { key: 'position', label: 'leaderboard.position', icon: Hash },
+  { key: 'name', label: 'leaderboard.player', icon: UserRound },
+  { key: 'wins', label: 'leaderboard.winsColumn', icon: Trophy },
+  { key: 'bestWinStreak', label: 'leaderboard.bestStreak', icon: Award },
+  { key: 'winStreak', label: 'leaderboard.streakColumn', icon: Flame },
+  { key: 'bestScore', label: 'leaderboard.best', icon: Layers3 },
 ]
 
 function PositionTrend({ change, t }) {
@@ -24,7 +24,7 @@ function PositionTrend({ change, t }) {
   const Icon = rising ? ArrowUp : ArrowDown
   return (
     <span
-      className={`inline-flex items-center gap-0.5 rounded-md px-1 py-0.5 text-[11px] font-bold ${rising ? 'text-emerald-300' : 'text-rose-400'}`}
+      className={`leaderboard-position-trend inline-flex items-center gap-0.5 rounded-md px-1 py-0.5 text-[11px] font-bold ${rising ? 'text-emerald-300' : 'text-rose-400'}`}
       role="img"
       aria-label={t(rising ? 'leaderboard.risen' : 'leaderboard.fallen', { count: Math.abs(change) })}
     >
@@ -82,13 +82,15 @@ export default function LeaderboardTable({ players, expanded, motion, sort, onSo
                 ? sort.direction === 'asc' ? 'desc' : 'asc'
                 : column.key === 'position' || column.key === 'name' || column.key === 'bestScore' ? 'asc' : 'desc'
               const Icon = sortIcon(column)
+              const ColumnIcon = column.icon
               const description = t('leaderboard.sortBy', { column: t(column.label), direction: t(nextDirection === 'asc' ? 'leaderboard.ascending' : 'leaderboard.descending') })
               return (
                 <th key={column.key} className="px-2 py-2 text-center font-medium" scope="col" aria-sort={active ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>
                   <span className="inline-flex items-center justify-center gap-0.5">
                     <Tooltip content={description}>
                       <button type="button" className={`leaderboard-sort-button inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-center transition-colors hover:bg-cyber-cyan/10 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-cyan/60 ${active ? 'text-cyan-100' : ''}`} onClick={() => onSort(column.key)} aria-label={description}>
-                        <span>{t(column.label)}</span>
+                        <span className="leaderboard-heading-full">{t(column.label)}</span>
+                        <span className="leaderboard-heading-compact" aria-hidden="true"><ColumnIcon size={13} strokeWidth={1.8} /></span>
                         <Icon size={column.key === 'name' ? 16 : 13} strokeWidth={column.key === 'name' ? 2 : 1.7} className={active ? 'text-cyan-300' : 'text-cyber-muted/70'} aria-hidden="true" />
                       </button>
                     </Tooltip>
@@ -120,7 +122,7 @@ export default function LeaderboardTable({ players, expanded, motion, sort, onSo
               }}
             >
               <td>
-                <div className="leaderboard-cell gap-1 px-2 font-mono text-xs text-cyber-muted">
+                <div className="leaderboard-cell leaderboard-position-cell px-2 font-mono text-xs text-cyber-muted">
                   <span>{String(player.position).padStart(2, '0')}</span>
                   <PositionTrend change={positionChange(player, previousPositions)} t={t} />
                 </div>

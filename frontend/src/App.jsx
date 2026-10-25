@@ -138,7 +138,7 @@ export default function App() {
 
   const handleSidebarPointerEnter = (event) => {
     if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return
-    if (window.matchMedia('(max-width: 760px)').matches) return
+    if (window.matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse)').matches) return
     window.clearTimeout(hoverCloseTimer.current)
     setSidebarHovered(true)
   }

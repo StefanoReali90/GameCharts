@@ -18,9 +18,16 @@ export default function SearchPopover({ anchorRef, query, onSearch, onClose, lab
       const anchor = anchorRef.current?.getBoundingClientRect()
       if (!anchor) return
       const width = Math.min(310, window.innerWidth - 24)
+      const viewportTop = window.visualViewport?.offsetTop ?? 0
+      const viewportBottom = viewportTop + (window.visualViewport?.height ?? window.innerHeight)
+      const panelHeight = panelRef.current?.offsetHeight ?? 160
+      const below = anchor.bottom + 9
+      const top = below + panelHeight <= viewportBottom - 12
+        ? below
+        : Math.max(viewportTop + 12, anchor.top - panelHeight - 9)
       setPosition({
         left: Math.max(12, Math.min(window.innerWidth - width - 12, anchor.left + anchor.width / 2 - width / 2)),
-        top: anchor.bottom + 9,
+        top,
         width,
       })
     }
@@ -30,10 +37,14 @@ export default function SearchPopover({ anchorRef, query, onSearch, onClose, lab
     updatePosition()
     window.addEventListener('resize', updatePosition)
     window.addEventListener('scroll', updatePosition, true)
+    window.visualViewport?.addEventListener('resize', updatePosition)
+    window.visualViewport?.addEventListener('scroll', updatePosition)
     document.addEventListener('pointerdown', handleOutside, true)
     return () => {
       window.removeEventListener('resize', updatePosition)
       window.removeEventListener('scroll', updatePosition, true)
+      window.visualViewport?.removeEventListener('resize', updatePosition)
+      window.visualViewport?.removeEventListener('scroll', updatePosition)
       document.removeEventListener('pointerdown', handleOutside, true)
     }
   }, [anchorRef, onClose])

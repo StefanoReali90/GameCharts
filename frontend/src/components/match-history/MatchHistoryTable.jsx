@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useCallback, useRef, useState } from 'react'
-import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, CalendarDays, Layers3, Search, UsersRound } from 'lucide-react'
 import { useFloatingTilt } from '../../hooks/useFloatingTilt.js'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 import SearchPopover from '../ui/SearchPopover.jsx'
@@ -16,9 +16,9 @@ export default function MatchHistoryTable({ matches, sort, onSort, winnerQuery, 
     if (restoreFocus) window.requestAnimationFrame(() => filterButtonRef.current?.focus())
   }, [])
   const columns = [
-    { key: 'date', label: 'history.date' },
-    { key: 'winners', label: 'history.winner' },
-    { key: 'winningScore', label: 'history.scores' },
+    { key: 'date', label: 'history.date', icon: CalendarDays },
+    { key: 'winners', label: 'history.winner', icon: UsersRound },
+    { key: 'winningScore', label: 'history.scores', icon: Layers3 },
   ]
 
   return (
@@ -37,10 +37,13 @@ export default function MatchHistoryTable({ matches, sort, onSort, winnerQuery, 
               const active = sort.key === column.key
               const nextDirection = active ? sort.direction === 'asc' ? 'desc' : 'asc' : column.key === 'winners' ? 'asc' : 'desc'
               const Icon = active ? sort.direction === 'asc' ? ArrowUp : ArrowDown : ArrowUpDown
+              const ColumnIcon = column.icon
               return <th key={column.key} className="px-4 py-2 text-center font-medium" scope="col" aria-sort={active ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>
                 <span className="inline-flex items-center justify-center gap-0.5">
                   <button type="button" className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-2 text-cyber-muted transition-colors hover:bg-cyber-purple/10 hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-cyan/60" onClick={() => onSort(column.key)} aria-label={t('leaderboard.sortBy', { column: t(column.label), direction: t(nextDirection === 'asc' ? 'leaderboard.ascending' : 'leaderboard.descending') })}>
-                    {t(column.label)} <Icon size={14} aria-hidden="true" />
+                    <span className="history-heading-full">{t(column.label)}</span>
+                    <span className="history-heading-compact" aria-hidden="true"><ColumnIcon size={14} strokeWidth={1.8} /></span>
+                    <Icon size={14} aria-hidden="true" />
                   </button>
                   {column.key === 'winners' && (
                     <Tooltip content={t('history.searchWinners')}>

@@ -30,19 +30,12 @@ export function NeonInput({ className, ...props }) {
 }
 
 export function NeonSelect({ className, children, ...props }) {
-  const floating = useFloatingTilt({ tilt: 3, float: 1.5, duration: 5.6 })
-
   return (
-    <motion.select
-      className={cn(controlClasses, 'appearance-none pr-9 transform-gpu', className)}
-      style={floating.style}
-      animate={floating.animate}
-      transition={floating.transition}
-      onPointerMove={floating.onPointerMove}
-      onPointerLeave={floating.onPointerLeave}
+    <select
+      className={cn(controlClasses, 'cursor-pointer appearance-auto pr-9', className)}
       {...props}
     >
       {children}
-    </motion.select>
+    </select>
   )
 }
