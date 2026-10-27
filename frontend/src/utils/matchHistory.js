@@ -1,9 +1,9 @@
 export function buildMatchHistoryRows(data, unknownPlayer = 'Giocatore sconosciuto') {
   const players = new Map(data.players.map((player) => [player.id, player.username]))
-  return data.matches.map((match) => ({
-    ...match,
-    winnerNames: match.winnerIds.map((id) => players.get(id) ?? unknownPlayer),
-  }))
+  return data.matches.map((match) => {
+    const winners = match.winnerIds.map((id) => ({ id, username: players.get(id) ?? unknownPlayer, known: players.has(id) }))
+    return { ...match, winners, winnerNames: winners.map((winner) => winner.username) }
+  })
 }
 
 const searchable = (value) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLocaleLowerCase()

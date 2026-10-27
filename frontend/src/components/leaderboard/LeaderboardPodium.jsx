@@ -14,7 +14,7 @@ const podiumPlaces = [
   { rank: 3, tone: 'bronze', gridClass: 'col-start-3 row-start-1', heightClass: 'min-h-[135px] sm:min-h-[145px]', flight: { x: 90, y: -70, rotate: 10 } },
 ]
 
-export default function LeaderboardPodium({ players, expanded, entranceReady, entranceFinished, podiumRef, onEntranceComplete }) {
+export default function LeaderboardPodium({ players, expanded, entranceReady, entranceFinished, podiumRef, onEntranceComplete, highlightedPlayerId, skipEntrance = false }) {
   const { t } = useI18n()
   const reducedMotion = useReducedMotion()
   const [litRanks, setLitRanks] = useState([])
@@ -55,6 +55,7 @@ export default function LeaderboardPodium({ players, expanded, entranceReady, en
 
   const podiumVariants = useMemo(() => podiumPlaces.map((place) => ({
     hidden: { ...place.flight, opacity: 0, scale: 0.55 },
+    static: { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1, transition: { duration: 0 } },
     visible: reducedMotion
       ? { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1, transition: { duration: 0 } }
       : {
@@ -77,9 +78,9 @@ export default function LeaderboardPodium({ players, expanded, entranceReady, en
           key={place.rank}
           className={`podium-place podium-place--${place.tone} ${place.gridClass}`}
           initial={false}
-          animate={expanded ? 'away' : entranceReady ? 'visible' : 'hidden'}
+          animate={expanded ? 'away' : skipEntrance ? 'static' : entranceReady ? 'visible' : 'hidden'}
           onUpdate={(latest) => {
-            if (!entranceReady || expanded || reducedMotion || impacted.current.has(place.rank)) return
+            if (!entranceReady || skipEntrance || expanded || reducedMotion || impacted.current.has(place.rank)) return
             const y = Number(latest.y)
             if (!Number.isFinite(y)) return
             if (y < -8) cameFromAbove.current.add(place.rank)
@@ -93,8 +94,8 @@ export default function LeaderboardPodium({ players, expanded, entranceReady, en
           }}
           variants={podiumVariants[index]}
         >
-          <div className={`podium-lift${!expanded && impactedRanks.includes(place.rank) ? ' podium-lift--impact' : ''}`}>
-            <PodiumCard {...place} label={t('leaderboard.place', { rank: place.rank })} impactActive={!expanded && impactedRanks.includes(place.rank)} floatingEnabled={!expanded && entranceFinished && litRanks.includes(place.rank)} className={place.heightClass} player={players.find((player) => player.position === place.rank)} />
+          <div className={`podium-lift${!expanded && impactedRanks.includes(place.rank) ? ' podium-lift--impact' : ''}${!expanded && players.some((player) => player.position === place.rank && player.id === highlightedPlayerId) ? ' podium-lift--selected' : ''}`}>
+            <PodiumCard {...place} label={t('leaderboard.place', { rank: place.rank })} impactActive={!expanded && impactedRanks.includes(place.rank)} floatingEnabled={!expanded && !skipEntrance && entranceFinished && litRanks.includes(place.rank)} instantWins={skipEntrance} className={place.heightClass} player={players.find((player) => player.position === place.rank)} highlighted={players.some((player) => player.position === place.rank && player.id === highlightedPlayerId)} />
           </div>
         </motion.div>
       ))}

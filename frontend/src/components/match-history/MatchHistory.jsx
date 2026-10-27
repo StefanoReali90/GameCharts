@@ -5,7 +5,7 @@ import MatchHistoryFilters from './MatchHistoryFilters.jsx'
 import MatchHistoryTable from './MatchHistoryTable.jsx'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
-export default function MatchHistory({ data }) {
+export default function MatchHistory({ data, onPlayerSelect }) {
   const { t, locale } = useI18n()
   const [period, setPeriod] = useState('all')
   const [winnerQuery, setWinnerQuery] = useState('')
@@ -24,7 +24,7 @@ export default function MatchHistory({ data }) {
   return (
     <div className="match-history grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4">
       <MatchHistoryFilters period={period} onPeriodChange={setPeriod} />
-      <MatchHistoryTable matches={matches} sort={sort} onSort={toggleSort} winnerQuery={winnerQuery} onWinnerQueryChange={setWinnerQuery} />
+      <MatchHistoryTable matches={matches} sort={sort} onSort={toggleSort} winnerQuery={winnerQuery} onWinnerQueryChange={setWinnerQuery} onPlayerSelect={onPlayerSelect} />
     </div>
   )
 }

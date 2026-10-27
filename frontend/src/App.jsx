@@ -18,6 +18,7 @@ export default function App() {
   const [sidebarHovered, setSidebarHovered] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState('leaderboard')
+  const [targetPlayerId, setTargetPlayerId] = useState(null)
   const [matchData, setMatchData] = useState(loadMatchData)
   const matchDataRef = useRef(matchData)
   matchDataRef.current = matchData
@@ -154,9 +155,10 @@ export default function App() {
     setSidebarHovered(false)
   }
 
-  const navigateTo = (page) => {
+  const navigateTo = (page, playerId = null) => {
     window.clearTimeout(hoverCloseTimer.current)
     setCurrentPage(page)
+    setTargetPlayerId(playerId)
     if (page !== 'leaderboard') setPodiumEntranceFinished(true)
     setSidebarPinned(false)
     setSidebarHovered(false)
@@ -211,8 +213,8 @@ export default function App() {
         <span className="layout-inner-curve" aria-hidden="true" />
         <main className="page-container relative min-h-0 min-w-0 overflow-hidden">
           {currentPage === 'leaderboard'
-            ? <LeaderboardPage entranceReady={podiumEntranceReady} entranceFinished={podiumEntranceFinished} onEntranceComplete={() => setPodiumEntranceFinished(true)} data={matchData} previousPositions={previousPositions} />
-            : <MatchHistoryPage data={matchData} />}
+            ? <LeaderboardPage entranceReady={podiumEntranceReady} entranceFinished={podiumEntranceFinished} onEntranceComplete={() => setPodiumEntranceFinished(true)} data={matchData} previousPositions={previousPositions} targetPlayerId={targetPlayerId} />
+            : <MatchHistoryPage data={matchData} onPlayerSelect={(playerId) => navigateTo('leaderboard', playerId)} />}
         </main>
       </div>
       <SettingsDialog

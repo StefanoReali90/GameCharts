@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Maximize2, Minimize2, SearchX } from 'lucide-react'
 import { useReducedMotion } from 'framer-motion'
 import { buildLeaderboard, findLeaderboardPlayer, selectLeaderboardPlayers } from '../../utils/leaderboard.js'
@@ -9,7 +9,7 @@ import LeaderboardTable from './LeaderboardTable.jsx'
 import Tooltip from '../ui/Tooltip.jsx'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
-export default function Leaderboard({ data, previousPositions, entranceReady = true, entranceFinished = false, onEntranceComplete }) {
+export default function Leaderboard({ data, previousPositions, targetPlayerId = null, entranceReady = true, entranceFinished = false, onEntranceComplete }) {
   const { t, locale } = useI18n()
   const [tableExpanded, setTableExpanded] = useState(false)
   const [layoutExpanded, setLayoutExpanded] = useState(false)
@@ -17,6 +17,7 @@ export default function Leaderboard({ data, previousPositions, entranceReady = t
   const [nameQuery, setNameQuery] = useState('')
   const [sort, setSort] = useState({ key: 'position', direction: 'asc' })
   const [podiumHeight, setPodiumHeight] = useState(null)
+  const [spotlightPlayerId, setSpotlightPlayerId] = useState(targetPlayerId)
   const podiumRef = useRef(null)
   const reducedMotion = useReducedMotion()
 
@@ -33,7 +34,25 @@ export default function Leaderboard({ data, previousPositions, entranceReady = t
 
   const rankedPlayers = useMemo(() => buildLeaderboard(data), [data])
   const tablePlayers = useMemo(() => selectLeaderboardPlayers(rankedPlayers, nameQuery, sort, locale), [rankedPlayers, nameQuery, sort, locale])
-  const highlightedPlayerId = useMemo(() => findLeaderboardPlayer(rankedPlayers, nameQuery)?.id ?? null, [rankedPlayers, nameQuery])
+  const highlightedPlayerId = useMemo(() => findLeaderboardPlayer(rankedPlayers, nameQuery)?.id ?? targetPlayerId, [rankedPlayers, nameQuery, targetPlayerId])
+  const targetPosition = rankedPlayers.find((player) => player.id === targetPlayerId)?.position
+  const skipPodiumEntrance = targetPosition <= 3
+  const podiumHighlightedPlayerId = !layoutExpanded && !nameQuery.trim() && skipPodiumEntrance && spotlightPlayerId === targetPlayerId ? targetPlayerId : null
+
+  useEffect(() => {
+    if (targetPlayerId === null || !skipPodiumEntrance) return undefined
+    setSpotlightPlayerId(targetPlayerId)
+    const timer = window.setTimeout(() => setSpotlightPlayerId(null), 1600)
+    return () => window.clearTimeout(timer)
+  }, [targetPlayerId, skipPodiumEntrance])
+
+  useEffect(() => {
+    if (targetPlayerId === null || targetPosition === undefined) return
+    const selector = targetPosition <= 3
+      ? `.podium-card[data-player-id="${targetPlayerId}"]`
+      : `tr[data-player-id="${targetPlayerId}"]`
+    document.querySelector(selector)?.focus({ preventScroll: true })
+  }, [targetPlayerId, targetPosition])
   const showMedalRows = tableExpanded || Boolean(nameQuery.trim())
 
   const toggleSort = (key) => setSort((current) => current.key === key
@@ -71,6 +90,8 @@ export default function Leaderboard({ data, previousPositions, entranceReady = t
           entranceFinished={entranceFinished}
           onEntranceComplete={onEntranceComplete}
           players={rankedPlayers.filter((player) => player.position <= 3)}
+          highlightedPlayerId={podiumHighlightedPlayerId}
+          skipEntrance={skipPodiumEntrance}
         />
       </div>
       <section className={`leaderboard-results neon-surface relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-cyber-cyan/45 p-4 shadow-neon-cyan sm:p-5 ${layoutExpanded ? 'min-h-0' : 'min-h-[264px]'}`} aria-label={t('leaderboard.aria')}>
@@ -112,7 +133,7 @@ export default function Leaderboard({ data, previousPositions, entranceReady = t
           sort={sort}
           onSort={toggleSort}
           nameQuery={nameQuery}
-          highlightedPlayerId={highlightedPlayerId}
+          highlightedPlayerId={skipPodiumEntrance && !nameQuery.trim() ? null : highlightedPlayerId}
           onNameSearch={setNameQuery}
           hasPodium={!showMedalRows && rankedPlayers.some((player) => player.position <= 3)}
           previousPositions={previousPositions}

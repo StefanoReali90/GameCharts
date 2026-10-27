@@ -4,9 +4,10 @@ import { ArrowDown, ArrowUp, ArrowUpDown, CalendarDays, Layers3, Search, UsersRo
 import { useFloatingTilt } from '../../hooks/useFloatingTilt.js'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 import SearchPopover from '../ui/SearchPopover.jsx'
+import ScoreCards from '../ui/ScoreCards.jsx'
 import Tooltip from '../ui/Tooltip.jsx'
 
-export default function MatchHistoryTable({ matches, sort, onSort, winnerQuery, onWinnerQueryChange }) {
+export default function MatchHistoryTable({ matches, sort, onSort, winnerQuery, onWinnerQueryChange, onPlayerSelect }) {
   const { t, locale } = useI18n()
   const floating = useFloatingTilt({ tilt: 0.5, float: 0.8, duration: 6.4 })
   const [filterOpen, setFilterOpen] = useState(false)
@@ -67,8 +68,19 @@ export default function MatchHistoryTable({ matches, sort, onSort, winnerQuery, 
               <td className="whitespace-nowrap px-4 py-3.5 text-xs tabular-nums text-cyber-muted">
                 <time dateTime={match.date}>{new Date(match.date).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}</time>
               </td>
-              <td className="px-4 py-3.5 text-green-200">{match.winnerNames.join(', ')}</td>
-              <td className={`px-4 py-3.5 font-semibold tabular-nums ${match.winningScore < 0 ? 'text-emerald-300' : 'text-cyber-text'}`}>{match.winningScore}</td>
+              <td className="px-4 py-3.5 text-green-200">
+                {match.winners.map((winner, index) => (
+                  <span key={`${winner.id}-${index}`} className="inline-block whitespace-nowrap">
+                    {index > 0 && ', '}
+                    {winner.known ? (
+                      <button type="button" className="rounded px-0.5 text-green-200 underline decoration-green-300/50 underline-offset-4 transition-colors hover:text-green-100 hover:decoration-current focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-cyan" aria-label={`${winner.username} — ${t('nav.leaderboard')}`} onClick={() => onPlayerSelect(winner.id)}>
+                        {winner.username}
+                      </button>
+                    ) : winner.username}
+                  </span>
+                ))}
+              </td>
+              <td className="px-4 py-3.5"><ScoreCards score={match.winningScore} /></td>
             </tr>
           )) : (
             <tr>

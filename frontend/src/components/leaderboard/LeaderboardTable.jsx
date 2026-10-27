@@ -113,6 +113,7 @@ export default function LeaderboardTable({ players, expanded, motion, sort, onSo
             <tr
               key={player.id}
               data-player-id={player.id}
+              tabIndex={-1}
               data-rank={player.position <= 3 ? player.position : undefined}
               data-search-match={player.id === highlightedPlayerId || undefined}
               aria-hidden={!expanded && player.position <= 3}
