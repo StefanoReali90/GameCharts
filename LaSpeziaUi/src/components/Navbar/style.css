@@ -1,0 +1,63 @@
+
+
+.app-navbar {
+  position: relative;
+  z-index: 1;
+}
+
+.app-navbar {
+  background: rgb(var(--layout-surface));
+}
+
+.app-navbar {
+  background: rgb(var(--layout-surface));
+}
+
+.app-navbar::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: calc(var(--sidebar-current-width) + var(--layout-curve-radius));
+  height: 1px;
+  background: rgb(255 255 255 / 0.08);
+  content: '';
+  pointer-events: none;
+  transition: left var(--sidebar-duration) var(--sidebar-ease);
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-shell .app-navbar {
+    position: absolute;
+    z-index: 50;
+    top: 8px;
+    left: 8px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    gap: 0;
+    background: transparent;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-navbar > .hamburger-button {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    border-radius: 12px;
+    background: rgb(var(--layout-surface) / 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 22px rgb(0 0 0 / 0.3), 0 0 0 1px rgb(var(--cyber-cyan) / 0.08);
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-navbar-brand,
+.app-navbar::after {
+    display: none;
+  }
+}

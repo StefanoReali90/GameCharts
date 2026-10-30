@@ -1,0 +1,138 @@
+
+
+@keyframes magic-rainbow-flow {
+  from {
+    background-position: 0% 50%;
+  }
+
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+.page-heading::after {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgb(var(--cyber-cyan) / 0.56), rgb(var(--cyber-purple) / 0.38), transparent);
+  box-shadow: none;
+  content: '';
+  pointer-events: none;
+}
+
+.page-heading {
+  position: relative;
+  padding-bottom: 14px;
+}
+
+.neon-title {
+  position: relative;
+  isolation: isolate;
+  max-width: 100%;
+  padding: 0.35rem 0;
+  color: #f7f9fc;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.015em;
+  text-align: center;
+}
+
+.neon-title__layers {
+  position: relative;
+  display: inline-grid;
+  max-width: 100%;
+  isolation: isolate;
+}
+
+.neon-title__layers > span {
+  grid-area: 1 / 1;
+}
+
+.neon-title__text {
+  position: relative;
+  z-index: 2;
+  color: #f7f9fc;
+}
+
+.neon-title--sm {
+  font-size: clamp(1.4rem, 2vw + 0.75rem, 2rem);
+}
+
+.neon-title--md {
+  font-size: clamp(1.65rem, 4vw, 2.5rem);
+}
+
+.neon-title--lg {
+  font-size: clamp(2.15rem, 4vw + 1rem, 3.6rem);
+}
+
+.app-navbar-brand.neon-title {
+  padding: 0;
+  font-size: clamp(1.125rem, 1.5vw + 0.8rem, 1.5rem);
+}
+
+.neon-title__glow,
+.neon-title__shadow {
+  position: relative;
+  background-image: linear-gradient(90deg,
+    #ff729e 0%, #ffc47b 7%, #f4ec91 14%, #7be5b6 21%, #63d9f2 28%, #9ba9f8 35%, #cf9bf0 42%, #ff729e 50%,
+    #ffc47b 57%, #f4ec91 64%, #7be5b6 71%, #63d9f2 78%, #9ba9f8 85%, #cf9bf0 92%, #ff729e 100%);
+  background-position: 0% 50%;
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  pointer-events: none;
+  animation: magic-rainbow-flow 10s linear infinite;
+}
+
+.neon-title__glow {
+  z-index: 1;
+  filter: blur(4px);
+  opacity: 0.85;
+}
+
+.neon-title__shadow {
+  z-index: 0;
+  filter: blur(14px);
+  opacity: 0.48;
+  transform: translateY(5px);
+}
+
+.page-heading::after {
+  right: calc(50% - 28px);
+  bottom: 0;
+  left: calc(50% - 28px);
+  height: 2px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.35);
+  box-shadow: none;
+}
+
+.page-container > section[aria-labelledby='leaderboard-page-title'] .page-heading::after {
+  bottom: 12px;
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .page-heading {
+    padding-right: 48px;
+    padding-left: 48px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .neon-title--lg {
+    font-size: clamp(24px, 5vw, 31px);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px) {
+
+  .neon-title--lg {
+    font-size: 22px;
+  }
+}
+
+.neon-title__layers[data-outline="rainbow"] .neon-title__text { -webkit-text-stroke: 1px transparent; paint-order: stroke fill; background: linear-gradient(90deg,#ff729e,#ffc47b,#7be5b6,#63d9f2,#cf9bf0); background-clip: text; }

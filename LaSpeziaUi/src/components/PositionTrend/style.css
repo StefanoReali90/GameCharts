@@ -1,0 +1,15 @@
+
+
+.leaderboard-position-trend {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .leaderboard-position-trend {
+    right: 1px;
+  }
+}

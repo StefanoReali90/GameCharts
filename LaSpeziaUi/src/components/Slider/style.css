@@ -1,0 +1,63 @@
+
+
+.audio-volume-slider {
+  appearance: none;
+  height: 28px;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.audio-volume-slider::-webkit-slider-runnable-track {
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--range-accent) var(--range-fill), rgb(255 255 255 / 0.15) var(--range-fill));
+}
+
+.audio-volume-slider::-moz-range-track {
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--range-accent) var(--range-fill), rgb(255 255 255 / 0.15) var(--range-fill));
+}
+
+.audio-volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 19px;
+  height: 19px;
+  margin-top: -6px;
+  border: 3px solid var(--range-accent);
+  border-radius: 50%;
+  background: #15172a;
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.07), 0 0 14px var(--range-accent);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.audio-volume-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: 3px solid var(--range-accent);
+  border-radius: 50%;
+  background: #15172a;
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 0.07), 0 0 14px var(--range-accent);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.audio-volume-slider:hover::-webkit-slider-thumb,
+.audio-volume-slider:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 6px rgb(255 255 255 / 0.1), 0 0 20px var(--range-accent);
+}
+
+.audio-volume-slider:hover::-moz-range-thumb,
+.audio-volume-slider:focus-visible::-moz-range-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 6px rgb(255 255 255 / 0.1), 0 0 20px var(--range-accent);
+}
+
+.audio-volume-slider:focus-visible {
+  outline: 2px solid var(--range-accent);
+  outline-offset: 3px;
+  border-radius: 999px;
+}

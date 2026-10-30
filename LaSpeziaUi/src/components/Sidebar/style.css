@@ -1,0 +1,158 @@
+
+
+.app-shell[data-sidebar-open='true'] {
+  --sidebar-current-width: var(--sidebar-expanded-width);
+}
+
+.workspace-layout {
+  position: relative;
+  z-index: 1;
+}
+
+.app-sidebar {
+  background: rgb(var(--layout-surface));
+}
+
+.app-sidebar::after {
+  position: absolute;
+  z-index: 1;
+  top: var(--layout-curve-radius);
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgb(255 255 255 / 0.08);
+  content: '';
+  pointer-events: none;
+}
+
+.layout-inner-curve {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: var(--sidebar-current-width);
+  width: var(--layout-curve-radius);
+  height: var(--layout-curve-radius);
+  background: radial-gradient(
+    circle at 100% 100%,
+    transparent calc(var(--layout-curve-radius) - 1px),
+    rgb(255 255 255 / 0.08) var(--layout-curve-radius),
+    rgb(var(--layout-surface)) calc(var(--layout-curve-radius) + 1px)
+  );
+  pointer-events: none;
+  transition: left var(--sidebar-duration) var(--sidebar-ease);
+}
+
+.sidebar-panel {
+  width: 100%;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.sidebar-footer {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  white-space: nowrap;
+  transition: max-height var(--sidebar-duration) var(--sidebar-ease), opacity 180ms ease, padding var(--sidebar-duration) var(--sidebar-ease);
+}
+
+.app-sidebar[data-open='true'] .sidebar-footer {
+  max-height: 44px;
+  padding-top: 12px;
+  padding-bottom: 8px;
+  opacity: 1;
+}
+
+.workspace-layout {
+  background: transparent;
+  grid-template-columns: var(--sidebar-current-width) minmax(0, 1fr);
+  transition: grid-template-columns var(--sidebar-duration) var(--sidebar-ease);
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+  .workspace-layout {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .workspace-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-sidebar {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--sidebar-expanded-width);
+    border-radius: 0 24px 24px 0;
+    box-shadow: 18px 0 42px rgb(0 0 0 / 0.32);
+    transform: translate3d(-100%, 0, 0);
+    visibility: hidden;
+    transition: transform 380ms var(--sidebar-ease), visibility 0s linear 380ms;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-sidebar[data-open='true'] {
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
+    transition: transform 380ms var(--sidebar-ease), visibility 0s;
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .sidebar-panel {
+    width: 100%;
+    padding: 64px 16px 16px;
+    transition: none;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .sidebar-footer {
+    max-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 8px;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .sidebar-backdrop {
+    position: absolute;
+    z-index: 10;
+    inset: 0;
+    display: block;
+    border: 0;
+    background: rgb(2 6 17 / 0.58);
+    touch-action: none;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .layout-inner-curve {
+    display: none;
+  }
+}
+
+.app-shell:has(.app-sidebar[data-transition="instant"]) { --sidebar-duration:0ms; }
+.app-sidebar[data-transition="instant"], .app-sidebar[data-transition="instant"] *, .app-shell:has(.app-sidebar[data-transition="instant"]) .workspace-layout, .app-shell:has(.app-sidebar[data-transition="instant"]) .layout-inner-curve, .app-shell:has(.app-sidebar[data-transition="instant"]) .app-navbar::after { transition:none !important; transition-delay:0ms !important; }
+.app-shell:has(.app-sidebar[data-corners="square"]), .app-shell:has(.app-navbar[data-corners="square"]) { --layout-curve-radius:0px; }
+.app-sidebar[data-corners="square"] { border-radius:0; }
+.app-shell:has(.app-sidebar[data-corners="square"]) .layout-inner-curve, .app-shell:has(.app-navbar[data-corners="square"]) .layout-inner-curve { display:none; }

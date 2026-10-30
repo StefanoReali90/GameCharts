@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>,'type'> { label?:ReactNode; leading?:ReactNode; tone?:'cyan'|'purple'; accent?:string; formatValue?:(value:number|string|readonly string[])=>ReactNode }

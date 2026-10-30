@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface DialogProps { open: boolean; onRequestClose: () => void; title: ReactNode; children?: ReactNode; footer?: ReactNode; showCloseButton?: boolean; closeLabel?: string; backdropOpacity?: number; backdropBlur?: number|string; closeOnBackdropClick?: boolean; closeOnEscape?: boolean }

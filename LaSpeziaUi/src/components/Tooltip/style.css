@@ -1,0 +1,39 @@
+
+
+.app-tooltip {
+  text-transform: capitalize;
+}
+
+.app-tooltip {
+  position: fixed;
+  z-index: 100;
+  max-width: min(260px, calc(100vw - 24px));
+  padding: 9px 12px;
+  transform: translateX(-50%);
+  border: 1px solid rgb(var(--cyber-cyan) / 0.45);
+  border-radius: 10px;
+  background: #11182c;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.48), 0 0 20px rgb(var(--cyber-cyan) / 0.14);
+  color: #e8f8ff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  pointer-events: none;
+  animation: app-tooltip-in 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-tooltip-trigger--disabled > button {
+  pointer-events: none;
+}
+
+.app-tooltip-trigger--disabled:focus-visible {
+  outline: 2px solid rgb(var(--cyber-cyan) / 0.7);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+@keyframes app-tooltip-in {
+  from { opacity: 0; transform: translate(-50%, 4px) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}

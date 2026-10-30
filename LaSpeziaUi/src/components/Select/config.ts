@@ -1,0 +1,1 @@
+export const controlClasses = 'h-11 w-full rounded-xl border border-cyber-purple/40 bg-cyber-bg/80 px-3 text-sm text-cyber-text outline-none shadow-[inset_0_0_14px_rgb(var(--cyber-purple)/0.08)] transition placeholder:text-cyber-muted/70 hover:border-cyber-cyan/55 focus:border-cyber-cyan focus:ring-2 focus:ring-cyber-cyan/25 focus:shadow-neon-cyan'

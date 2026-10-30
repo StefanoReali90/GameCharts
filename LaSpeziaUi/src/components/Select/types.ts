@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> { label?:ReactNode; description?:ReactNode; leading?:ReactNode; variant?:'field'|'settings'; wrapperClassName?:string; labelClassName?:string }

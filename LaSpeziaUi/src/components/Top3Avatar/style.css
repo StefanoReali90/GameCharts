@@ -1,0 +1,62 @@
+
+
+.playing-card-avatar--pair .playing-card-thumbnail:first-child {
+  transform: rotate(-7deg) translateY(1px);
+}
+
+.playing-card-avatar--pair .playing-card-thumbnail + .playing-card-thumbnail {
+  z-index: 1;
+  transform: rotate(7deg) translateY(1px);
+}
+
+.playing-card-avatar--triple .playing-card-thumbnail:first-child {
+  transform: rotate(-10deg) translateY(3px);
+}
+
+.playing-card-avatar--triple .playing-card-thumbnail:nth-child(2) {
+  z-index: 2;
+  transform: translateY(-3px);
+}
+
+.playing-card-avatar--triple .playing-card-thumbnail:nth-child(3) {
+  z-index: 1;
+  transform: rotate(10deg) translateY(3px);
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .podium-card .leaderboard-avatar {
+    width: auto;
+    height: 40px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .podium-card .leaderboard-avatar .playing-card-thumbnail {
+    width: 25px;
+    height: 37px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .podium-card .leaderboard-avatar .playing-card-thumbnail + .playing-card-thumbnail {
+    margin-left: -6px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px) {
+
+  .podium-card .leaderboard-avatar {
+    height: 30px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px) {
+
+  .podium-card .leaderboard-avatar .playing-card-thumbnail {
+    width: 20px;
+    height: 28px;
+  }
+}

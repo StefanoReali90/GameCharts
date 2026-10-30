@@ -1,0 +1,35 @@
+
+
+.app-dialog {
+  max-height: min(90dvh, 700px);
+  margin: auto;
+  overflow: visible;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+.app-dialog__content {
+  max-height: min(90dvh, 700px);
+  overflow-y: auto;
+}
+
+.app-dialog::backdrop {
+  background: rgb(3 5 15 / 0.78);
+  backdrop-filter: blur(7px);
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-dialog__content {
+    scrollbar-width: none;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-dialog__content::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.app-dialog::backdrop { background: rgb(3 5 15 / var(--dialog-backdrop-opacity, 0.78)); backdrop-filter: blur(var(--dialog-backdrop-blur, 7px)); }

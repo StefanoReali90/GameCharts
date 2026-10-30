@@ -1,0 +1,44 @@
+{
+  "name": "laspeziaui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Componenti UI locali per La Spezia Online",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./styles.css": "./src/styles/index.css",
+    "./tailwind-preset": "./tailwind-preset.js"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "node ../frontend/node_modules/vite/bin/vite.js build --config vite.config.js --configLoader native",
+    "docs": "node scripts/sync-docs.mjs",
+    "test": "node --test src/audio/engine.test.js src/i18n/locales.test.js",
+    "check": "node scripts/check-structure.mjs"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^14.6.0",
+    "lucide-react": "^1.61.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "files": [
+    "src",
+    "scripts",
+    "ARCHITETTURA.md",
+    "README.md",
+    "tailwind-preset.js",
+    "vite.config.js"
+  ]
+}

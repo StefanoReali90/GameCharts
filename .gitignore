@@ -38,6 +38,11 @@ build/
 
 ### Documentazione locale ###
 *.[mM][dD]
+!LaSpeziaUi/README.md
+!CLAUDE.md
+!documentazione/*.md
+!documentazione/**/*.md
+!LaSpeziaUi/**/*.md
 
 ### Dipendenze e output generati ###
 node_modules/

@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface SoundEffectsProps { enabled?:boolean; muted?:boolean; volume?:number; preload?:boolean; unlockOnInteraction?:boolean; maxPlaybackDelayMs?:number; deduplicationWindowMs?:number; interactionSounds?:boolean|{selector?:string}; effectOptions?:Record<string,{enabled?:boolean;volume?:number}> }

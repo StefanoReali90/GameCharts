@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface SidebarPageButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>,'children'> { label:string; icon:ReactNode; showIndicator?:boolean; active?:boolean; mode?:'expanded'|'collapsed'; tone?:'cyan'|'purple' }

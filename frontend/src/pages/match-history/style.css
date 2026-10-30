@@ -1,0 +1,3 @@
+.match-history-page {
+  @apply grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-y-auto gap-4 p-4 sm:gap-5 sm:p-6;
+}

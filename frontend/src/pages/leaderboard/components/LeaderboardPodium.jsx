@@ -1,0 +1,93 @@
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'laspeziaui'
+import PodiumCard from './PodiumCard.jsx'
+import { playPodiumChime } from 'laspeziaui'
+import { useI18n } from 'laspeziaui'
+
+import { entranceDuration, entranceStagger, impactPoint, podiumPlaces } from '../config.jsx'
+
+export default function LeaderboardPodium({ players, expanded, entranceReady, entranceFinished, podiumRef, onEntranceComplete, highlightedPlayerId, skipEntrance = false }) {
+  const { t } = useI18n()
+  const reducedMotion = useReducedMotion()
+  const [impactedRanks, setImpactedRanks] = useState([])
+  const wasExpanded = useRef(expanded)
+  const soundOnThisReveal = useRef(!entranceFinished)
+  const impacted = useRef(new Set())
+  const cameFromAbove = useRef(new Set())
+  const sounded = useRef(new Set())
+
+  const markImpact = (rank) => {
+    if (impacted.current.has(rank)) return
+    impacted.current.add(rank)
+    setImpactedRanks((ranks) => [...ranks, rank])
+  }
+
+  useEffect(() => {
+    const returnedFromTable = wasExpanded.current && !expanded
+    wasExpanded.current = expanded
+    if (expanded) {
+      soundOnThisReveal.current = false
+      impacted.current.clear()
+      cameFromAbove.current.clear()
+      sounded.current.clear()
+      setImpactedRanks([])
+    }
+    if (returnedFromTable) soundOnThisReveal.current = true
+  }, [expanded])
+
+  useLayoutEffect(() => {
+    for (const rank of impactedRanks) {
+      if (sounded.current.has(rank)) continue
+      sounded.current.add(rank)
+      if (soundOnThisReveal.current && !reducedMotion && document.visibilityState === 'visible') playPodiumChime(rank)
+    }
+  }, [impactedRanks, reducedMotion])
+
+  const podiumVariants = useMemo(() => podiumPlaces.map((place) => ({
+    hidden: { ...place.flight, opacity: 0, scale: 0.55 },
+    static: { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1, transition: { duration: 0 } },
+    visible: reducedMotion
+      ? { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1, transition: { duration: 0 } }
+      : {
+          x: [place.flight.x, 0, 0, 0],
+          y: [place.flight.y, 14, -5, 0],
+          rotate: [place.flight.rotate, 0, 0, 0],
+          opacity: [0, 1, 1, 1],
+          scale: [0.55, 1.09, 0.98, 1],
+          transition: { duration: entranceDuration, times: [0, impactPoint, 0.82, 1], ease: 'easeOut', delay: (3 - place.rank) * entranceStagger },
+        },
+    away: reducedMotion
+      ? { opacity: 0, transition: { duration: 0 } }
+      : { ...place.flight, opacity: 0, scale: 0.55, transition: { duration: 0.5, ease: 'easeIn', delay: (place.rank - 1) * 0.05 } },
+  })), [reducedMotion])
+
+  return (
+    <div className="relative z-0 min-h-0 self-start" aria-hidden={expanded || !entranceReady} inert={expanded}><section ref={podiumRef} className="leaderboard-podium mx-auto grid w-full max-w-4xl grid-cols-3 items-end gap-3 pb-[26px] pt-1 sm:pt-2" aria-label={t('leaderboard.podium')}>
+      {podiumPlaces.map((place, index) => (
+        <motion.div
+          key={place.rank}
+          className={`podium-place podium-place--${place.tone} min-w-0 ${place.gridClass}`}
+          initial={false}
+          animate={expanded ? 'away' : skipEntrance ? 'static' : entranceReady ? 'visible' : 'hidden'}
+          onUpdate={(latest) => {
+            if (!entranceReady || skipEntrance || expanded || reducedMotion || impacted.current.has(place.rank)) return
+            const y = Number(latest.y)
+            if (!Number.isFinite(y)) return
+            if (y < -8) cameFromAbove.current.add(place.rank)
+            if (cameFromAbove.current.has(place.rank) && y >= 5) markImpact(place.rank)
+          }}
+          onAnimationComplete={(definition) => {
+            if (definition !== 'visible') return
+            markImpact(place.rank)
+            if (place.rank === 1) onEntranceComplete?.()
+          }}
+          variants={podiumVariants[index]}
+        >
+          <div className={`podium-lift${!expanded && impactedRanks.includes(place.rank) ? ' podium-lift--impact' : ''}${!expanded && players.some((player) => player.position === place.rank && player.id === highlightedPlayerId) ? ' podium-lift--selected' : ''}`}>
+            <PodiumCard {...place} label={t('leaderboard.place', { rank: place.rank })} impactActive={!expanded && impactedRanks.includes(place.rank)} instantWins={skipEntrance} className={place.heightClass} player={players.find((player) => player.position === place.rank)} highlighted={players.some((player) => player.position === place.rank && player.id === highlightedPlayerId)} />
+          </div>
+        </motion.div>
+      ))}
+    </section></div>
+  )
+}

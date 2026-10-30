@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface SearchPopoverProps { anchorRef: RefObject<HTMLElement|null>; query: string; onSearch: (value:string)=>void; onClose:(restoreFocus?:boolean)=>void; label:string; idPrefix:string }

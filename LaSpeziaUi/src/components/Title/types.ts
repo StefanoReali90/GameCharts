@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface TitleProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> { as?: ElementType; title?: ReactNode; children?: ReactNode; size?: 'small'|'medium'|'large'|'sm'|'md'|'lg'; neon?: boolean; textOutline?: boolean|string; showDivider?: boolean; leading?: ReactNode; headingClassName?: string }

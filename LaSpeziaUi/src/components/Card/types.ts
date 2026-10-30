@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface CardProps extends HTMLAttributes<HTMLElement> { as?: ElementType; variant?: 'glass'; border?: boolean; borderColor?: string; borderEffect?: 'neon'|'none'; motion?: 'floating'|'none'; size?: 'small'|'medium'|'large'; tilt?: number; pressTilt?: number }

@@ -1,0 +1,154 @@
+
+
+.app-shell[data-intro-visible='true'] *,
+.app-shell[data-intro-visible='true'] *::before,
+.app-shell[data-intro-visible='true'] *::after {
+  animation-play-state: paused !important;
+}
+
+.app-shell::before {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  background: url('/videos/background-poster.jpg') center / cover no-repeat;
+  content: '';
+  pointer-events: none;
+}
+
+.app-shell::after {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 14% 0%, rgb(var(--cyber-cyan) / 0.08), transparent 35%),
+    radial-gradient(ellipse at 88% 14%, rgb(var(--cyber-purple) / 0.08), transparent 33%),
+    linear-gradient(180deg, rgb(5 8 18 / 0.12), rgb(5 8 18 / 0.25));
+  content: '';
+  pointer-events: none;
+}
+
+.app-shell {
+  isolation: isolate;
+  text-transform: capitalize;
+  -webkit-user-select: none;
+  user-select: none;
+  --sidebar-rail-width: 60px;
+  --sidebar-expanded-width: 240px;
+  --sidebar-current-width: var(--sidebar-rail-width);
+  --sidebar-duration: 520ms;
+  --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --layout-curve-radius: 36px;
+}
+
+.app-shell input:not([type='range']) {
+  text-transform: none;
+}
+
+.app-shell input::placeholder {
+  text-transform: capitalize;
+}
+
+.app-shell * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.app-background-video {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 420ms ease;
+  pointer-events: none;
+}
+
+.app-background-video[data-playing='true'] {
+  opacity: 0.88;
+}
+
+.page-container {
+  isolation: isolate;
+  background: linear-gradient(180deg, rgb(7 12 27 / 0.78), rgb(10 15 29 / 0.42) 27%, rgb(7 11 22 / 0.56));
+}
+
+.page-container::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: radial-gradient(ellipse 65% 55% at 88% 10%, rgb(var(--cyber-purple) / 0.045), transparent 75%);
+  content: '';
+  pointer-events: none;
+}
+
+.page-container::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(var(--cyber-cyan) / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--cyber-cyan) / 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(135deg, transparent 4%, #000 55%, transparent 100%);
+  content: '';
+  pointer-events: none;
+}
+
+.page-container > section {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+  .app-shell,
+.page-container {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .page-container > section {
+    scrollbar-width: none;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .page-container > section::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .app-shell {
+    --sidebar-rail-width: 0px;
+    --sidebar-expanded-width: min(86vw, 320px);
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .page-container > section {
+    overflow-x: hidden;
+    padding: 4px 8px 8px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px) {
+  .page-container > section {
+    gap: 4px;
+    padding: 0 8px 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-background-video {
+    display: none;
+  }
+}

@@ -1,0 +1,106 @@
+
+
+.streak-flame.motion-observed:not(.motion-visible) svg {
+  animation-play-state: paused;
+}
+
+.streak-flame svg {
+  flex: none;
+  transform-origin: 50% 88%;
+}
+
+.streak-flame__count {
+  position: absolute;
+  z-index: 1;
+  top: 59%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #30160c;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 0 2px rgb(255 244 197 / 0.9), 0 1px 1px rgb(255 244 197 / 0.8);
+}
+
+.streak-flame__count[data-digits='3'] {
+  font-size: 8px;
+}
+
+.streak-flame__count[data-digits='4'] {
+  font-size: 7px;
+}
+
+.streak-flame--off .streak-flame__count {
+  color: #d2dce8;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.95), 0 0 3px rgb(0 0 0 / 0.8);
+}
+
+.streak-flame--strong .streak-flame__count {
+  text-shadow: 0 0 3px rgb(255 250 213 / 0.95), 0 1px 1px rgb(255 244 197 / 0.8);
+}
+
+.streak-flame--off svg {
+  color: #718093;
+  fill: #303b4b;
+  opacity: 0.7;
+}
+
+.streak-flame--warm svg {
+  color: #ffc365;
+  fill: #ff7a2e;
+  filter: drop-shadow(0 0 5px rgb(255 133 43 / 0.75));
+  animation: streak-flame-flicker 1.25s ease-in-out infinite alternate;
+}
+
+.streak-flame--strong svg {
+  color: #fff1a2;
+  fill: #ff6a1a;
+  filter: drop-shadow(0 0 var(--streak-glow) rgb(255 119 20 / 0.95)) drop-shadow(0 0 4px rgb(255 215 77 / 0.9));
+  animation: streak-flame-flicker 680ms ease-in-out infinite alternate;
+}
+
+@keyframes streak-flame-flicker {
+  from { transform: rotate(-5deg) scale(0.94, 1.04); }
+  to { transform: rotate(5deg) scale(1.08, 0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streak-flame svg { animation: none; }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .podium-card .streak-flame,
+.podium-card .streak-flame svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .podium-card .streak-flame__count {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .leaderboard-table td:nth-child(5) .streak-flame,
+.leaderboard-table td:nth-child(5) .streak-flame svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px) {
+
+  .podium-card .streak-flame,
+.podium-card .streak-flame svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.streak-flame[data-animation="glow"]:not(.streak-flame--off) svg { transform: none; animation-name: streak-glow-pulse; }
+@keyframes streak-glow-pulse { from { opacity: 0.65; } to { opacity: 1; } }

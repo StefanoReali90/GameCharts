@@ -1,0 +1,54 @@
+
+
+.playing-card-thumbnail {
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.42);
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .podium-card .playing-card-thumbnail {
+    width: 14px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .leaderboard-table td:nth-child(6) .playing-card-thumbnail {
+    width: 13px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .leaderboard-table td:nth-child(6) .playing-card-thumbnail + .playing-card-thumbnail {
+    margin-left: -5px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .history-table td:last-child .playing-card-thumbnail {
+    width: 14px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+
+  .history-table td:last-child .playing-card-thumbnail + .playing-card-thumbnail {
+    margin-left: -3px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1000px) {
+
+  .podium-card .playing-card-thumbnail {
+    width: 11px;
+    height: 16px;
+  }
+}
+
+.playing-card--small { width: 20px; height: 28px; }
+.playing-card--medium { width: 38px; height: 54px; }

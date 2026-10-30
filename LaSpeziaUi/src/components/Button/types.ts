@@ -1,0 +1,2 @@
+import type { HTMLAttributes, ElementType, ReactNode, ReactElement, Ref, RefObject, SVGProps, ButtonHTMLAttributes, SelectHTMLAttributes, InputHTMLAttributes, AudioHTMLAttributes, CSSProperties, PointerEvent, AnimationEvent } from 'react'
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> { variant?: 'primary'|'subtle'|'ghost'|'save'|'restore'|'close'|'link'|'plain'; motionEnabled?: boolean; icon?: ReactNode; iconOnly?: boolean; size?: 'icon'; ref?: Ref<HTMLButtonElement> }
